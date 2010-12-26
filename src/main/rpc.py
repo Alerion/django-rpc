@@ -1,4 +1,5 @@
 from utils.rpc import RpcRouter
+from main.forms import FeedbackForm
 
 class MainApiClass(object):
     
@@ -7,7 +8,18 @@ class MainApiClass(object):
     
     def func2(self, user):
         return {}
-
+    
+    def submit(self, rdata, user):
+        print rdata
+        form = FeedbackForm(rdata)
+        if form.is_valid():
+            form.send()
+            return {}
+        else:
+            return {
+                'errors': form.get_errors()
+            }
+    
 class OtherApiClass(object):
 
     def _extra_kwargs(self, request, *args, **kwargs):

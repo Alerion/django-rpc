@@ -200,7 +200,7 @@ jQuery.inherit = function(){
             spp.constructor = sp;
         }
         sb.override = function(o){
-            Ext.override(sb, o);
+            jQuery.override(sb, o);
         };
         sbp.superclass = sbp.supr = (function(){
             return spp;

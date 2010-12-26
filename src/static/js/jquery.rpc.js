@@ -270,7 +270,6 @@
                     }
                 }
             }else{
-                //TODO: There is calling of opt, that jQuery don't has
                 var ts = [].concat(opt.ts);
                 for(var i = 0, len = ts.length; i < len; i++){
                     var t = this.getTransaction(ts[i]);
@@ -386,63 +385,10 @@
                 this.fireEvent('call', this, t);
             }
         },
-    
-        doForm : function(c, m, form, callback, scope){
-            //TODO
-            var t = new $.Rpc.Transaction({
-                provider: this,
-                action: c,
-                method: m.name,
-                args:[form, callback, scope],
-                cb: scope && $.isFunction(callback) ? callback.createDelegate(scope) : callback,
-                isForm: true
-            });
-    
-            if(this.fireEvent('beforecall', this, t) !== false){
-                $.Rpc.addTransaction(t);
-                var isUpload = String(form.getAttribute("enctype")).toLowerCase() == 'multipart/form-data',
-                    params = {
-                        extTID: t.tid,
-                        extAction: c,
-                        extMethod: m.name,
-                        extType: 'rpc',
-                        extUpload: String(isUpload)
-                    };
-                
-                $.extend(t, {
-                    form: Ext.getDom(form),
-                    isUpload: isUpload,
-                    params: callback && $.isObject(callback.params) ? $.extend(params, callback.params) : params
-                });
-                this.fireEvent('call', this, t);
-                this.processForm(t);
-            }
-        },
-        
-        processForm: function(t){
-            //TODO
-            Ext.Ajax.request({
-                url: this.url,
-                params: t.params,
-                callback: this.onData,
-                scope: this,
-                form: t.form,
-                isUpload: t.isUpload,
-                ts: t
-            });
-        },
-    
         createMethod : function(c, m){
-            var f;
-            if(!m.formHandler){
-                f = function(){
-                    this.doCall(c, m, Array.prototype.slice.call(arguments, 0));
-                }.createDelegate(this);
-            }else{
-                f = function(form, callback, scope){
-                    this.doForm(c, m, form, callback, scope);
-                }.createDelegate(this);
-            }
+            var f = function(){
+                this.doCall(c, m, Array.prototype.slice.call(arguments, 0));
+            }.createDelegate(this);
             f.directCfg = {
                 action: c,
                 method: m

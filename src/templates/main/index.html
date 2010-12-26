@@ -4,9 +4,15 @@
     <script src="{{ MEDIA_URL }}js/jquery-1.4.2.js"></script>
     <script src="{{ MEDIA_URL }}js/jquery.util.js"></script>
     <script src="{{ MEDIA_URL }}js/jquery.rpc.js"></script>
+    <script src="{{ MEDIA_URL }}js/jquery.form.js"></script>
     <script src="{% url main:api %}"></script>
     <script src="{% url main:custom_router_api %}"></script>    
     <script>
+        //Show error message for RPC exceptions
+        jQuery.Rpc.on('exception', function(event){
+            console.log('ERROR: '+event.message);
+        }); 
+                
         //MainApi.func1(self, val, d=123, *args, **kwargs)
         //MainApi.func2(self, user)
         MainApi.func1(1, 2, 3, function(){
@@ -47,5 +53,23 @@
 {% endblock %}
 
 {% block body %}
-
+<form action="." method="post" id="feedback_form">
+    <table>
+    {{ form }}
+    <tr>
+        <td></td><td><button>Submit</button></td>
+    </tr>
+    </table>
+</form>
+<script>
+    $('#feedback_form').ajaxForm({
+        type: 'RPC',
+        api: {
+            submit: MainApi.submit
+        },
+        success: function(){
+            console.log(arguments)
+        }
+    });    
+</script>
 {% endblock %}
