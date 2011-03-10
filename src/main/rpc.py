@@ -1,24 +1,29 @@
 from utils.rpc import RpcRouter
 from main.forms import FeedbackForm
+from utils.rpc import Error, Msg, RpcHttpResponse
 
 class MainApiClass(object):
     
     def func1(self, val, d=123, *args, **kwargs):
-        return {'msg': u'func1'}
+        return {
+            'val': val,
+            'd': d,
+            'args': args,
+            'kwargs': kwargs.keys()
+        }
     
     def func2(self, user):
-        return {}
+        return Msg(u'func2')
     
     def submit(self, rdata, user):
-        print rdata
         form = FeedbackForm(rdata)
         if form.is_valid():
             form.send()
-            return {}
+            response = RpcHttpResponse()
+            response.cookies['test-cookie'] = 'TEST'
+            return response
         else:
-            return {
-                'errors': form.get_errors()
-            }
+            return Error(form.get_errors())
     
 class OtherApiClass(object):
 

@@ -1,7 +1,39 @@
 {% extends 'base.html' %}
 
 {% block head %}
-
+    <style>
+        .error_list {
+            color: #ec6e6e;
+        }
+        
+        p {
+            width: 500px;
+        }
+        
+        .code, .description {
+            font-size: 0.8em;
+        }
+        
+        .description {
+            color: #2f4c63;
+        }
+        
+        pre {
+            color: #4d8e5a;
+        }
+    </style>
+    <script src="{{ MEDIA_URL }}js/jquery-1.4.2.js"></script>
+    <script src="{{ MEDIA_URL }}js/jquery.util.js"></script>
+    <script src="{{ MEDIA_URL }}js/jquery.rpc.js"></script>
+    <script src="{{ MEDIA_URL }}js/jquery.form.js"></script>
+    <script src="{{ MEDIA_URL }}js/jgrowl/jquery.jgrowl.js"></script>
+    <link href="{{ MEDIA_URL }}js/jgrowl/jquery.jgrowl.css" media="all" type="text/css" rel="stylesheet" />
+    <script>
+        //Show error message for RPC exceptions
+        jQuery.Rpc.on('exception', function(event){
+            $.jGrowl.error('ERROR: '+event.message);
+        }); 
+    </script>        
 {% endblock %}
 
 {% block body %}

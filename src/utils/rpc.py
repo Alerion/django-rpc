@@ -2,13 +2,68 @@ from django.utils import simplejson
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from inspect import getargspec
+from Cookie import SimpleCookie
 
 class RpcExceptionEvent(Exception):
     """
     This exception is sent to server as Ext.Direct.ExceptionEvent.
     So we can handle it in client and show pretty message for user.
+    Example:
+    
+        class MainApiClass(object):
+            
+            def func2(self, user):
+                if not user.is_authenticated():
+                    raise RpcExceptionEvent(u'Permission denied.')
+                
+    And you can catch this with:
+    
+        jQuery.Rpc.on('exception', function(event){
+            alert('ERROR: '+event.message);
+        });     
     """
     pass
+
+class RpcResponse(dict):
+    pass
+
+class Error(RpcResponse):
+    """
+    Simple responses. Just for pretty code and some kind of "protocol"
+    """
+    def __init__(self, text, **kwargs):
+        super(Error, self).__init__(error=text, **kwargs)
+
+class Msg(RpcResponse):
+    """
+    Simple responses. Just for pretty code and some kind of "protocol"
+    """
+    def __init__(self, text, **kwargs):
+        super(Msg, self).__init__(msg=text, **kwargs)
+
+class RpcHttpResponse(RpcResponse):
+    """
+    This is vrapper for method's reponse, which allow save some modification of HTTP response.
+    For example set COOKIES. This should be flexible and useful for in future.
+    """
+    
+    def __init__(self, *args, **kwargs):
+        super(RpcHttpResponse, self).__init__(*args, **kwargs)
+        self.cookies = SimpleCookie()
+
+    def set_cookie(self, key, value='', max_age=None, expires=None, path='/',
+                   domain=None, secure=False):
+        self.cookies[key] = value
+        if max_age is not None:
+            self.cookies[key]['max-age'] = max_age
+        if expires is not None:
+            self.cookies[key]['expires'] = expires
+        if path is not None:
+            self.cookies[key]['path'] = path
+        if domain is not None:
+            self.cookies[key]['domain'] = domain
+        if secure:
+            self.cookies[key]['secure'] = True
 
 #for jQuery.Rpc
 class RpcRouter(object):
@@ -45,24 +100,48 @@ class RpcRouter(object):
         else:
             try:
                 requests = simplejson.loads(request.POST.keys()[0])
-            except ValueError:
+            except (ValueError, KeyError, IndexError):
                 requests = []
             
         if not isinstance(requests, list):
                 requests = [requests]
+        
+        response = HttpResponse('', mimetype="application/json")
             
-        output = [self.call_action(rd, request, *args, **kwargs) for rd in requests]
+        output = []
+        
+        for rd in requests:
+            mr = self.call_action(rd, request, *args, **kwargs)
             
-        return HttpResponse(simplejson.dumps(output), mimetype="application/json")    
+            #This looks like a little ugly
+            if 'result' in mr and isinstance(mr['result'], RpcHttpResponse):
+                for key, val in mr['result'].cookies.items():
+                    response.set_cookie(key, val.value, val['max-age'], val['expires'], val['path'],
+                                        val['domain'], val['secure'])
+                mr['result'] = dict(mr['result'])
+                
+            output.append(mr)
+        
+        response.content = simplejson.dumps(output)
+            
+        return response 
     
     def action_extra_kwargs(self, action, request, *args, **kwargs):
         """
         Check maybe this action get some extra arguments from request
-        """        
+        """  
         if hasattr(action, '_extra_kwargs'):
             return action._extra_kwargs(request, *args, **kwargs)
         return {}
     
+    def method_extra_kwargs(self, method, request, *args, **kwargs):
+        """
+        Check maybe this method get some extra arguments from request
+        """  
+        if hasattr(method, '_extra_kwargs'):
+            return method._extra_kwargs(request, *args, **kwargs)
+        return {}
+        
     def extra_kwargs(self, request, *args, **kwargs):
         """
         For all method in ALL actions we add request.user to arguments. 
@@ -89,14 +168,14 @@ class RpcRouter(object):
         exception event for Ext.Direct.
         """        
         method = rd['method']
-        
+
         if not rd['action'] in self.actions:
             return {
                 'tid': rd['tid'],
                 'type': 'exception',
                 'action': rd['action'],
                 'method': method,
-                'message': 'Incorrect arguments number'
+                'message': 'Undefined action'
             }
         
         action = self.actions[rd['action']]
@@ -105,6 +184,7 @@ class RpcRouter(object):
 
         extra_kwargs = self.extra_kwargs(request, *args, **kwargs)
         extra_kwargs.update(self.action_extra_kwargs(action, request, *args, **kwargs))
+        extra_kwargs.update(self.method_extra_kwargs(func, request, *args, **kwargs))
         
         func_args, varargs, varkw, func_defaults = getargspec(func)
         func_args.remove('self') #TODO: or cls for classmethod
@@ -170,3 +250,20 @@ class RpcRouterJSONEncoder(simplejson.JSONEncoder):
             return output
         else:
             return super(RpcRouterJSONEncoder, self).default(o)
+
+def add_request_to_kwargs(func):
+    """
+    This is decorator for adding request to passed arguments. 
+    For example:
+    
+    class MainApiClass(object):
+        
+        @add_request_to_kwargs
+        def func2(self, user, request):
+            return Msg(u'func2')    
+    """
+    def extra_kwargs_func(request, *args, **kwargs):
+        return dict(request=request)
+    
+    func._extra_kwargs = extra_kwargs_func
+    return func

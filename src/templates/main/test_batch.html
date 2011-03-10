@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+
+{% block head %}
+    {{ block.super }}
+    <script src="{% url main:api %}"></script>
+{% endblock %}
+
+{% block body %}
+    <h2>#3 Test batch</h2>
+    <a href="{% url main:index %}">back</a>
+
+    <p class="description">
+        It also support batching. In this page we do three calling of MainApi methods.
+        And you can see with FireBug that only one request was sent.
+    </p>
+    <pre>
+        MainApi.func1(1,2, callback);
+        MainApi.func1(1, callback);
+        MainApi.func2(callback);        
+    </pre>
+    <script>
+        function callback(response){
+            $.jGrowl(response.toSource().slice(1,-1));
+        };        
+        MainApi.func1(1,2, callback);
+        MainApi.func1(1, callback);
+        MainApi.func2(callback);
+    </script>  
+
+{% endblock %}

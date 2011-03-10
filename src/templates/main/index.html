@@ -1,75 +1,7 @@
 {% extends 'main/base.html' %}
 
-{% block head %}
-    <script src="{{ MEDIA_URL }}js/jquery-1.4.2.js"></script>
-    <script src="{{ MEDIA_URL }}js/jquery.util.js"></script>
-    <script src="{{ MEDIA_URL }}js/jquery.rpc.js"></script>
-    <script src="{{ MEDIA_URL }}js/jquery.form.js"></script>
-    <script src="{% url main:api %}"></script>
-    <script src="{% url main:custom_router_api %}"></script>    
-    <script>
-        //Show error message for RPC exceptions
-        jQuery.Rpc.on('exception', function(event){
-            console.log('ERROR: '+event.message);
-        }); 
-                
-        //MainApi.func1(self, val, d=123, *args, **kwargs)
-        //MainApi.func2(self, user)
-        MainApi.func1(1, 2, 3, function(){
-            //params for *args
-            console.log(arguments)
-        });
-        MainApi.func1(1, function(){
-            //d will have default value
-            console.log(arguments)
-        });               
-        MainApi.func2(function(){
-            console.log(arguments)
-        });
-        MainApi.func2(1, function(){
-            //{'error': 'Undefined action class'}
-            console.log(arguments)
-        });
-        MainApi.func1(function(){
-            //{'error': 'Undefined action class'}
-            console.log(arguments)
-        });
-            
-        OtherApi.func1(function(){
-            console.log(arguments)
-        });
-        //all previous are sended in one request
-        
-        //These are sended not in one request, because enable_buffer == False
-        //From other router
-        SomeApi.func1(function(){
-            //this == {a: 1}
-            console.log(this, arguments)
-        }, {a: 1});
-        SomeApi.func1(function(){
-            console.log(arguments)
-        });        
-    </script>
-{% endblock %}
-
 {% block body %}
-<form action="." method="post" id="feedback_form">
-    <table>
-    {{ form }}
-    <tr>
-        <td></td><td><button>Submit</button></td>
-    </tr>
-    </table>
-</form>
-<script>
-    $('#feedback_form').ajaxForm({
-        type: 'RPC',
-        api: {
-            submit: MainApi.submit
-        },
-        success: function(){
-            console.log(arguments)
-        }
-    });    
-</script>
+<h2><a href="{% url main:test_main_api %}">#1 Test MainApi</a></h2>
+<h2><a href="{% url main:test_form %}">#2 Test form sending with RPC</a></h2>
+<h2><a href="{% url main:test_batch %}">#3 Test batch</a></h2>
 {% endblock %}

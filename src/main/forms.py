@@ -5,5 +5,5 @@ class FeedbackForm(forms.Form, AjaxForm):
     email = forms.EmailField()
     message = forms.CharField(widget=forms.Textarea())
     
-    def send(self, request):
+    def send(self):
         pass
