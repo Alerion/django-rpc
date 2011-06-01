@@ -272,13 +272,15 @@
                 }
             }else{
                 var ts = [].concat(opt.ts);
+
                 for(var i = 0, len = ts.length; i < len; i++){
                     var t = this.getTransaction(ts[i]);
+
                     if(t && t.retryCount < this.maxRetries){
                         t.retry();
                     }else{
                         var e = new $.Rpc.ExceptionEvent({
-                            data: e,
+                            data: ts[i].data,
                             transaction: t,
                             code: $.Rpc.exceptions.TRANSPORT,
                             message: 'Unable to connect to the server.',
@@ -420,3 +422,5 @@
     });
      
 })(jQuery);
+
+
