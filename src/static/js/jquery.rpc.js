@@ -374,16 +374,27 @@
                 data = args.slice(0, len);
             }
             
-            scope = args[len+1];
-            cb = args[len] || $.noop;
-            
+            if (args[len+1] && $.isFunction(args[len+1])){
+                //we have failure callback after success
+                scope = args[len+2];
+                cb = {
+                    success: scope && $.isFunction(args[len]) ? args[len].createDelegate(scope) : args[len],
+                    failure: scope ? args[len+1].createDelegate(scope) : args[len+1]
+                }
+                scope = args[len+2];
+            }else{
+                scope = args[len+1];
+                cb = args[len] || $.noop;
+                cb = scope && $.isFunction(cb) ? cb.createDelegate(scope) : cb;               
+            }
+
             var t = new $.Rpc.Transaction({
                 provider: this,
                 args: args,
                 action: c,
                 method: m.name,
                 data: data,
-                cb: scope && $.isFunction(cb) ? cb.createDelegate(scope) : cb
+                cb: cb
             });
     
             if(this.fireEvent('beforecall', this, t) !== false){
