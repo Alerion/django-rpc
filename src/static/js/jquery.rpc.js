@@ -326,11 +326,12 @@
             if(this.enableUrlEncode){
                 var params = {};
                 params[(typeof this.enableUrlEncode == 'string') ? this.enableUrlEncode : 'data'] = $.JSON.encode(callData);
-                o.data = params;
+                o.data = $.param(params);
             }else{
-                o.data = $.JSON.encode(callData);
+                o.data = encodeURIComponent($.JSON.encode(callData));
                 o.processData = false;
             }
+            
             o.complete = this.onData.createDelegate(this, o, true);
             $.ajax(o);
         },
