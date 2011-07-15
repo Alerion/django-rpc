@@ -100,7 +100,7 @@ class RpcRouter(object):
             requests = {
                 'action': POST.get('rpcAction'),
                 'method': POST.get('rpcMethod'),
-                'data': [POST],
+                'data': [dict(POST)],
                 'upload': POST.get('rpcUpload') == 'true',
                 'tid': POST.get('rpcTID')
             }
