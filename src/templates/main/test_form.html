@@ -63,7 +63,7 @@
             api: {
                 submit: MainApi.submit
             },
-            success: function(data, status, xhr, $form){
+            success: function(data, rpc_response, $form){
                 $.jGrowl(data.toSource().slice(1,-1));
                 if (data.success){
                     $form.resetForm();
