@@ -427,7 +427,6 @@
                     hs(result, e);
                 } else{
                     hs[fn].apply(hs.scope, [result, e]); 
-                    hs.callback.apply(hs.scope, [result, e]); 
                 }
             }
         }
