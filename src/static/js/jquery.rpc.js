@@ -1,4 +1,5 @@
 /* jQuery.Rpc */
+/* Examples and some documetation here: https://github.com/Alerion/jQuery-Utils */
 (function($){
  
     $.Rpc = $.inherit(jQuery.util.Observable, {
@@ -15,7 +16,7 @@
                 'exception'
             );
             this.transactions = {};
-            this.providers = {};        
+            this.providers = {};
         },
         
         addProvider : function(provider){
@@ -25,7 +26,7 @@
                     this.addProvider(a[i]);
                 }
                 return;
-            }          
+            }
               
             if(!provider.events){
                 provider = new $.Rpc.RemotingProvider(provider);
@@ -87,7 +88,7 @@
     
         createEvent : function(response, extraProps){
             return new $.Rpc.eventTypes[response.type]($.extend(response, extraProps));
-        }        
+        }
     });
 
     $.Rpc = new $.Rpc();
@@ -147,7 +148,7 @@
     };
     
     //Provider
-    $.Rpc.Provider = $.inherit($.util.Observable, {    
+    $.Rpc.Provider = $.inherit($.util.Observable, {
         
         priority: 1,
         
@@ -205,9 +206,9 @@
             }
             return events;
         }
-    }); 
+    });
     
-    $.Rpc.RemotingProvider = $.inherit($.Rpc.JsonProvider, {       
+    $.Rpc.RemotingProvider = $.inherit($.Rpc.JsonProvider, {
         enableBuffer: 10,
         
         maxRetries: 1,
@@ -217,7 +218,7 @@
         constructor : function(config){
             $.Rpc.RemotingProvider.superclass.constructor.call(this, config);
             this.addEvents(
-                'beforecall',            
+                'beforecall',
                 'call'
             );
             this.namespace = (typeof this.namespace == 'string') ? $.ns(this.namespace) : this.namespace || window;
@@ -258,12 +259,13 @@
             }
         },
     
-        onData: function(xhr, status, opt){
+        onData: function(xhr, status, transactions){
+            var i, len, e, t;
             if(status === 'success'){
                 var events = this.getEvents(xhr);
-                for(var i = 0, len = events.length; i < len; i++){
-                    var e = events[i],
-                        t = this.getTransaction(e);
+                for(i = 0, len = events.length; i < len; i++){
+                    e = events[i];
+                    t = this.getTransaction(e);
                     this.fireEvent('data', this, e);
                     if(t){
                         this.doCallback(t, e, true);
@@ -271,15 +273,15 @@
                     }
                 }
             }else{
-                var ts = [].concat(opt.ts);
+                var ts = [].concat(transactions);
 
-                for(var i = 0, len = ts.length; i < len; i++){
-                    var t = this.getTransaction(ts[i]);
+                for(i = 0, len = ts.length; i < len; i++){
+                    t = this.getTransaction(ts[i]);
 
                     if(t && t.retryCount < this.maxRetries){
                         t.retry();
                     }else{
-                        var e = new $.Rpc.ExceptionEvent({
+                        e = new $.Rpc.ExceptionEvent({
                             data: ts[i].data,
                             transaction: t,
                             code: $.Rpc.exceptions.TRANSPORT,
@@ -297,30 +299,39 @@
         },
     
         getCallData: function(t){
-            return {
-                action: t.action,
-                method: t.method,
-                data: t.data,
-                tid: t.tid
-            };
+            if (t.form){
+                return {
+                    rpcAction: t.action,
+                    rpcMethod: t.method,
+                    rpcTID: t.tid,
+                    rpcUpload: $('input:file:enabled[value]', t.form).length > 0
+                };
+            } else {
+                return {
+                    action: t.action,
+                    method: t.method,
+                    data: t.data,
+                    tid: t.tid
+                };
+            }
         },
     
-        doSend : function(data){
+        doSend : function(t){
             var o = {
                 url: this.url,
-                ts: data,
+                ts: t,
                 type: 'POST',
                 timeout: this.timeout,
                 dataType: 'json'
             }, callData;
     
-            if($.isArray(data)){
+            if($.isArray(t)){
                 callData = [];
-                for(var i = 0, len = data.length; i < len; i++){
-                    callData.push(this.getCallData(data[i]));
+                for(var i = 0, len = t.length; i < len; i++){
+                    callData.push(this.getCallData(t[i]));
                 }
             }else{
-                callData = this.getCallData(data);
+                callData = this.getCallData(t);
             }
 
             if(this.enableUrlEncode){
@@ -332,7 +343,7 @@
                 o.processData = false;
             }
             
-            o.complete = this.onData.createDelegate(this, o, true);
+            o.complete = this.onData.createDelegate(this, t, true);
             $.ajax(o);
         },
     
@@ -343,9 +354,25 @@
                 this.callBuffer = [];
             }
         },
-    
+
+        processForm: function(t){
+            // TODO: allow jquery.form use proper way to send form, not just iframe
+            // now problem is in response, RPC backend send data in <textarea> when
+            // fileUploadXhr tries parse json
+            t.form.ajaxSubmit({
+                iframe: true,
+                data: $.extend({}, this.getCallData(t), t.data),
+                dataType: 'json',
+                complete: this.onData.createDelegate(this, t, true),
+                type: 'POST',
+                timeout: this.timeout,
+                url: this.url
+            });
+        },
+
         queueTransaction: function(t){
             if(t.form){
+                // TODO: form is processed not in butch
                 this.processForm(t);
                 return;
             }
@@ -359,33 +386,47 @@
                 this.combineAndSend();
             }
         },
-    
+
         doCall : function(c, m, args){
-            var data = null, cb, scope, len = 0;
+            var data = null, form = null, cb, scope, len = 0;
 
-            $.each(args, function(i, val){
-                if ($.isFunction(val)){
-                    return false;
+            if (m.formHandler){
+                form = args[0];
+                len = 1;
+
+                // extra data
+                if ($.isObject(args[1])){
+                    data = args[1];
+                    len = 2;
                 }
-                len = i+1;
-            });
+            }else{
+                // Find out arguments number and get them
+                $.each(args, function(i, val){
+                    if ($.isFunction(val)){
+                        return false;
+                    }
+                    len = i+1;
+                });
 
-            if(len !== 0){
-                data = args.slice(0, len);
+                if(len !== 0){
+                    data = args.slice(0, len);
+                }
             }
             
+            // Get callbacks
             if (args[len+1] && $.isFunction(args[len+1])){
-                //we have failure callback after success
+                //we have failure callback after success one
                 scope = args[len+2];
                 cb = {
                     success: scope && $.isFunction(args[len]) ? args[len].createDelegate(scope) : args[len],
                     failure: scope ? args[len+1].createDelegate(scope) : args[len+1]
-                }
+                };
                 scope = args[len+2];
             }else{
+                // no failure callback after success one
                 scope = args[len+1];
                 cb = args[len] || $.noop;
-                cb = scope && $.isFunction(cb) ? cb.createDelegate(scope) : cb;               
+                cb = scope && $.isFunction(cb) ? cb.createDelegate(scope) : cb;
             }
 
             var t = new $.Rpc.Transaction({
@@ -394,6 +435,7 @@
                 action: c,
                 method: m.name,
                 data: data,
+                form: form,
                 cb: cb
             });
     
@@ -426,7 +468,7 @@
                 if($.isFunction(hs)){
                     hs(result, e);
                 } else{
-                    hs[fn].apply(hs.scope, [result, e]); 
+                    hs[fn].apply(hs.scope, [result, e]);
                 }
             }
         }

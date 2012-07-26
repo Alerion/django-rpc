@@ -97,23 +97,23 @@ jQuery.JSON = {
         if (typeof o == "undefined" || o === null) {
             return "null";
         }
-        else 
+        else
             if (o instanceof Array) {
                 return this.encodeArray(o);
             }
-            else 
+            else
                 if (o instanceof Date) {
                     return this.encodeDate(o);
                 }
-                else 
+                else
                     if (typeof o == "string") {
                         return this.encodeString(o);
                     }
-                    else 
+                    else
                         if (typeof o == "number") {
                             return isFinite(o) ? String(o) : "null";
                         }
-                        else 
+                        else
                             if (typeof o == "boolean") {
                                 return String(o);
                             }

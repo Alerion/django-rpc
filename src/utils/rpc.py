@@ -100,10 +100,9 @@ class RpcRouter(object):
         """
         This method is view that receive requests from Ext.Direct.
         """
-        user = request.user
         POST = request.POST
 
-        if POST.get('extAction'):
+        if POST.get('rpcAction'):
             #Forms with upload not supported yet
             requests = {
                 'action': POST.get('rpcAction'),
@@ -115,7 +114,7 @@ class RpcRouter(object):
 
             if requests['upload']:
                 requests['data'].append(request.FILES)
-                output = simplejson.dumps(self.call_action(requests, user))
+                output = simplejson.dumps(self.call_action(requests, request, *args, **kwargs))
                 return HttpResponse('<textarea>%s</textarea>' \
                                     % output)
         else:
@@ -125,7 +124,7 @@ class RpcRouter(object):
                 requests = []
 
         if not isinstance(requests, list):
-                requests = [requests]
+            requests = [requests]
 
         response = HttpResponse('', mimetype="application/json")
 
@@ -221,7 +220,7 @@ class RpcRouter(object):
 
         args = []
         for val in (rd.get('data') or []):
-            if isinstance(val, dict):
+            if isinstance(val, dict) and not isinstance(val, MultiValueDict):
                 val = RpcMultiValueDict(val)
             args.append(val)
 
@@ -275,10 +274,13 @@ class RpcRouterJSONEncoder(simplejson.JSONEncoder):
 
     def _encode_action(self, o):
         output = []
+
         for method in dir(o):
             if not method.startswith('_'):
-                #f = getattr(o, method)
                 data = dict(name=method)
+                f = getattr(o, method)
+                if hasattr(f, '_form_handler'):
+                    data['formHandler'] = getattr(f, '_form_handler')
                 output.append(data)
         return output
 
@@ -296,7 +298,16 @@ class RpcRouterJSONEncoder(simplejson.JSONEncoder):
             return super(RpcRouterJSONEncoder, self).default(o)
 
 
-def add_request_to_kwargs(func):
+METHOD_ATTRIBUTES = ['_pre_execute', '_form_handler', '_extra_kwargs']
+
+
+def copy_method_attributes(from_method, to_method):
+    for attr in METHOD_ATTRIBUTES:
+        if hasattr(from_method, attr):
+            setattr(to_method, attr, getattr(from_method, attr))
+
+
+def add_request_to_kwargs(method):
     """
     This is decorator for adding request to passed arguments.
     For example:
@@ -310,8 +321,8 @@ def add_request_to_kwargs(func):
     def extra_kwargs_func(request, *args, **kwargs):
         return dict(request=request)
 
-    func._extra_kwargs = extra_kwargs_func
-    return func
+    method._extra_kwargs = extra_kwargs_func
+    return method
 
 
 def login_required(method):
@@ -326,4 +337,12 @@ def login_required(method):
             raise RpcExceptionEvent(_(u'Login required'))
 
     method._pre_execute = check_login
+    return method
+
+
+def form_handler(method):
+    """
+    This decorator mark method as form handler
+    """
+    method._form_handler = True
     return method
