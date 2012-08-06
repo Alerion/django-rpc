@@ -179,7 +179,7 @@ class RpcRouter(object):
         <script src="{% url api_url_name %}"></script>
         """
         obj = simplejson.dumps(self, cls=RpcRouterJSONEncoder, url_args=args, url_kwargs=kwargs)
-        return HttpResponse('jQuery.Rpc.addProvider(%s)' % obj)
+        return HttpResponse('jQuery.Rpc.addProvider(%s)' % obj, content_type='application/x-javascript')
 
     def execute_func(self, func, *args, **kwargs):
         if hasattr(func, '_pre_execute'):
