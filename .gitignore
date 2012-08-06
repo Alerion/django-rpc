@@ -1,5 +1,6 @@
 *.pyc
 *.*~
-src/settings_local.py
+test/settings_local.py
 env/*
 database.sqlite
+*.sublime-*
