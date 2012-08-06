@@ -84,6 +84,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'example.main',
     'rpc',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',

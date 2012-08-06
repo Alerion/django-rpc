@@ -1,105 +1,31 @@
-from Cookie import SimpleCookie
+from .datastructures import RpcMultiValueDict
+from .exceptions import RpcExceptionEvent
+from .responses import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.utils import simplejson
-from django.utils.datastructures import MultiValueDict
-from django.utils.translation import ugettext_lazy as _
 from inspect import getargspec
 
 
-class RpcMultiValueDict(MultiValueDict):
-    """
-    Just allow pass not list values and get only dict as argument
-    """
-
-    def __init__(self, key_to_list_mapping={}):
-        for key, value in key_to_list_mapping.items():
-            if not isinstance(value, (list, tuple)):
-                key_to_list_mapping[key] = [value]
-
-        super(MultiValueDict, self).__init__(key_to_list_mapping)
-
-
-class RpcExceptionEvent(Exception):
-    """
-    This exception is sent to server as Ext.Direct.ExceptionEvent.
-    So we can handle it in client and show pretty message for user.
-    Example:
-
-        class MainApiClass(object):
-
-            def func2(self, user):
-                if not user.is_authenticated():
-                    raise RpcExceptionEvent(u'Permission denied.')
-
-    And you can catch this with:
-
-        jQuery.Rpc.on('exception', function(event){
-            alert('ERROR: '+event.message);
-        });
-    """
-    pass
-
-
-class RpcResponse(dict):
-    pass
-
-
-class Error(RpcResponse):
-    """
-    Simple responses. Just for pretty code and some kind of "protocol"
-    """
-    def __init__(self, text, **kwargs):
-        super(Error, self).__init__(error=text, **kwargs)
-
-
-class Msg(RpcResponse):
-    """
-    Simple responses. Just for pretty code and some kind of "protocol"
-    """
-    def __init__(self, text, **kwargs):
-        super(Msg, self).__init__(msg=text, **kwargs)
-
-
-class RpcHttpResponse(RpcResponse):
-    """
-    This is vrapper for method's reponse, which allow save some modification of HTTP response.
-    For example set COOKIES. This should be flexible and useful for in future.
-    """
-
-    def __init__(self, *args, **kwargs):
-        super(RpcHttpResponse, self).__init__(*args, **kwargs)
-        self.cookies = SimpleCookie()
-
-    def set_cookie(self, key, value='', max_age=None, expires=None, path='/',
-                   domain=None, secure=False):
-        self.cookies[key] = value
-        if max_age is not None:
-            self.cookies[key]['max-age'] = max_age
-        if expires is not None:
-            self.cookies[key]['expires'] = expires
-        if path is not None:
-            self.cookies[key]['path'] = path
-        if domain is not None:
-            self.cookies[key]['domain'] = domain
-        if secure:
-            self.cookies[key]['secure'] = True
-
-
-#for jQuery.Rpc
 class RpcRouter(object):
     """
-    Router for jQuery.Rpc calls.
+    Router class for RPC.
     """
+
     def __init__(self, url, actions={}, enable_buffer=True):
+        """
+        Router class for RPC.
+
+        :param url: URL pattern name or something you can pass to ``reverse``.
+            Used to get URL which router is connected.
+        :param actions: Action classes router should add to RPC API
+        :param enable_buffer: Define client should send requests in a butch
+        """
         self.url = url
         self.actions = actions
         self.enable_buffer = enable_buffer
 
     def __call__(self, request, *args, **kwargs):
-        """
-        This method is view that receive requests from Ext.Direct.
-        """
         POST = request.POST
 
         if POST.get('rpcAction'):
@@ -175,7 +101,7 @@ class RpcRouter(object):
     def api(self, request, *args, **kwargs):
         """
         This method is view that send js for provider initialization.
-        Just set this in template after ExtJs including:
+        Just set this in template after RPC scripts including:
         <script src="{% url api_url_name %}"></script>
         """
         obj = simplejson.dumps(self, cls=RpcRouterJSONEncoder, url_args=args, url_kwargs=kwargs)
@@ -190,9 +116,9 @@ class RpcRouter(object):
 
     def call_action(self, rd, request, *args, **kwargs):
         """
-        This method checks parameters of Ext.Direct request and call method of action.
+        This method checks parameters of RPC request and call method of action.
         It checks arguments number, method existing, handle RpcExceptionEvent and send
-        exception event for Ext.Direct.
+        exception event for RPC.
         """
         method = rd['method']
 
@@ -296,53 +222,3 @@ class RpcRouterJSONEncoder(simplejson.JSONEncoder):
             return output
         else:
             return super(RpcRouterJSONEncoder, self).default(o)
-
-
-METHOD_ATTRIBUTES = ['_pre_execute', '_form_handler', '_extra_kwargs']
-
-
-def copy_method_attributes(from_method, to_method):
-    for attr in METHOD_ATTRIBUTES:
-        if hasattr(from_method, attr):
-            setattr(to_method, attr, getattr(from_method, attr))
-
-
-def add_request_to_kwargs(method):
-    """
-    This is decorator for adding request to passed arguments.
-    For example:
-
-    class MainApiClass(object):
-
-        @add_request_to_kwargs
-        def func2(self, user, request):
-            return Msg(u'func2')
-    """
-    def extra_kwargs_func(request, *args, **kwargs):
-        return dict(request=request)
-
-    method._extra_kwargs = extra_kwargs_func
-    return method
-
-
-def login_required(method):
-    """
-    This docorator add _pre_execute function for checking if user
-    is authenticated
-    """
-    def check_login(func, *args, **kwargs):
-        user = kwargs.get('user')
-
-        if not user or not user.is_authenticated():
-            raise RpcExceptionEvent(_(u'Login required'))
-
-    method._pre_execute = check_login
-    return method
-
-
-def form_handler(method):
-    """
-    This decorator mark method as form handler
-    """
-    method._form_handler = True
-    return method

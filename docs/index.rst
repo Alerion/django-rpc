@@ -14,4 +14,4 @@ Contents
    about
    installation
    tutorial/index
-
+   api/index
