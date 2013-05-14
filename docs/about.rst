@@ -3,11 +3,4 @@
 About
 =====
 
-Some text here
-
-Key features
-------------
-
-Django RPC has a few key features:
-
- - Can work with forms
+Django RPC with jQuery. Post of Ext.Direct.

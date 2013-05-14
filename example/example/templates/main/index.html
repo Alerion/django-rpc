@@ -1,1 +1,7 @@
 {% extends 'base.html' %}
+
+{% block content %}
+    <ul>
+        <li><a href="{% url 'main:hello' %}">1. Hello, world!</a></li>
+    </ul>
+{% endblock %}

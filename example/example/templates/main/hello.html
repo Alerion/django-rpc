@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% url 'main:api' %}"></script>
+    <script>
+    jQuery(function($){
+        $('#send').click(function(){
+            MainApi.hello($('#username').val(), function(resp, sb){
+                alert(resp.msg);
+            });
+        })
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <input type="text" id="username">
+    <button id="send" class="btn">Send</button>
+{% endblock %}

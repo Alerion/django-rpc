@@ -3,8 +3,8 @@ from rpc import RpcRouter, Error, Msg
 
 class MainApiClass(object):
 
-    def hello(self, username):
-        return Msg(u'Hello %s' % username)
+    def hello(self, username, user):
+        return Msg(u'Hello, %s' % username)
 
 
 router = RpcRouter('main:router', {
