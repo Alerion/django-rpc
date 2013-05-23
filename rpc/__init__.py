@@ -146,7 +146,7 @@ class RpcRouter(object):
 
         args = []
         for val in (rd.get('data') or []):
-            if isinstance(val, dict) and not isinstance(val, MultiValueDict):
+            if isinstance(val, dict) and not isinstance(val, RpcMultiValueDict):
                 val = RpcMultiValueDict(val)
             args.append(val)
 
