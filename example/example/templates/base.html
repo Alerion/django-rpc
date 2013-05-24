@@ -15,36 +15,31 @@
         <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 
         <script>
-            // using jQuery
-            function getCookie(name) {
-                var cookieValue = null;
-                if (document.cookie && document.cookie != '') {
-                    var cookies = document.cookie.split(';');
-                    for (var i = 0; i < cookies.length; i++) {
-                        var cookie = jQuery.trim(cookies[i]);
-                        // Does this cookie string begin with the name we want?
-                        if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-            var csrftoken = getCookie('csrftoken');
-
-            function csrfSafeMethod(method) {
-                // these HTTP methods do not require CSRF protection
-                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-            }
-            $.ajaxSetup({
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: function(xhr, settings) {
-                    if (!csrfSafeMethod(settings.type)) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                    }
-                }
-            });
+              $(document).ready(function() {
+                  $.ajaxSetup({
+                      beforeSend: function(xhr, settings) {
+                          function getCookie(name) {
+                              var cookieValue = null;
+                              if (document.cookie && document.cookie != '') {
+                                  var cookies = document.cookie.split(';');
+                                  for (var i = 0; i < cookies.length; i++) {
+                                      var cookie = jQuery.trim(cookies[i]);
+                                      // Does this cookie string begin with the name we want?
+                                          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                              break;
+                                          }
+                                  }
+                              }
+                              return cookieValue;
+                          }
+                          if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                              // Only send the token to relative URLs i.e. locally.
+                              xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                          }
+                      }
+                  });
+              });
 
             //Show error message for RPC exceptions
             jQuery.Rpc.on('exception', function(event){
@@ -62,10 +57,12 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <a class="brand" href="#">Django RPC</a>
+                    <a class="brand" href="/">Django RPC demo</a>
                     <div class="nav-collapse">
                         <ul class="nav">
-                            <li class="active"><a href="/">Home</a></li>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="{% url 'main:hello' %}">1. Hello, world!</a></li>
+                            <li><a href="{% url 'main:form' %}">2. Form</a></li>
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div>

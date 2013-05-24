@@ -5,16 +5,24 @@
     <script src="{% url 'main:api' %}"></script>
     <script>
     jQuery(function($){
-        $('#send').click(function(){
+        $('#send1').click(function(){
             MainApi.hello($('#username').val(), function(resp, sb){
                 alert(resp.msg);
             });
-        })
+            return false;
+        });
     });
     </script>
 {% endblock %}
 
 {% block content %}
-    <input type="text" id="username">
-    <button id="send" class="btn">Send</button>
+    <form class="form-inline">
+        <input type="text" id="username" placeholder="username" value="%username%">
+        <button id="send1" class="btn">Send</button>
+    </form>
+
+    <form class="form-inline">
+        <input type="text" id="func_arguments" placeholder="arguments" value="1, 2, 3, 4, 5">
+        <button id="send2" class="btn">Send</button>
+    </form>
 {% endblock %}

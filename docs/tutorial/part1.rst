@@ -129,3 +129,8 @@ We can call our method::
     });
 
 You should see alert with messages "Hellp, Username".
+
+One more example of usage
+-------------------------
+
+Action method can have optional arguments or `*args`.

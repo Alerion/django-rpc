@@ -1,7 +1,7 @@
 /* jQuery.Rpc */
 /* Examples and some documetation here: https://github.com/Alerion/jQuery-Utils */
 (function($){
- 
+
     $.Rpc = $.inherit(jQuery.util.Observable, {
         exceptions: {
             TRANSPORT: 'xhr',
@@ -9,7 +9,7 @@
             LOGIN: 'login',
             SERVER: 'exception'
         },
-      
+
         constructor: function(){
             this.addEvents(
                 'event',
@@ -18,7 +18,7 @@
             this.transactions = {};
             this.providers = {};
         },
-        
+
         addProvider : function(provider){
             var a = arguments;
             if(a.length > 1){
@@ -27,28 +27,28 @@
                 }
                 return;
             }
-              
+
             if(!provider.events){
                 provider = new $.Rpc.RemotingProvider(provider);
             }
             provider.id = provider.id || $.guid++;
             this.providers[provider.id] = provider;
-    
+
             provider.on('data', this.onProviderData, this);
             provider.on('exception', this.onProviderException, this);
-    
+
             if(!provider.isConnected()){
                 provider.connect();
             }
-    
+
             return provider;
         },
-    
-        
+
+
         getProvider : function(id){
             return this.providers[id];
         },
-    
+
         removeProvider : function(id){
             var provider = id.id ? id : this.providers[id];
             provider.un('data', this.onProviderData, this);
@@ -56,21 +56,21 @@
             delete this.providers[provider.id];
             return provider;
         },
-    
+
         addTransaction: function(t){
             this.transactions[t.tid] = t;
             return t;
         },
-    
+
         removeTransaction: function(t){
             delete this.transactions[t.tid || t];
             return t;
         },
-    
+
         getTransaction: function(tid){
             return this.transactions[tid.tid || tid];
         },
-    
+
         onProviderData : function(provider, e){
             if($.isArray(e)){
                 for(var i = 0, len = e.length; i < len; i++){
@@ -85,7 +85,7 @@
             }
             this.fireEvent('event', e, provider);
         },
-    
+
         createEvent : function(response, extraProps){
             return new $.Rpc.eventTypes[response.type]($.extend(response, extraProps));
         }
@@ -94,7 +94,7 @@
     $.Rpc = new $.Rpc();
 
     $.Rpc.TID = 1;
-    
+
     //Transaction
     $.Rpc.Transaction = function(config){
         $.extend(this, config);
@@ -106,17 +106,17 @@
         send: function(){
             this.provider.queueTransaction(this);
         },
-    
+
         retry: function(){
             this.retryCount++;
             this.send();
         },
-    
+
         getProvider: function(){
             return this.provider;
         }
     };
-    
+
     //Event
     $.Rpc.Event = function(config){
         $.extend(this, config);
@@ -128,14 +128,14 @@
             return this.data;
         }
     };
-    
+
     $.Rpc.RemotingEvent = $.inherit($.Rpc.Event, {
         type: 'rpc',
         getTransaction: function(){
             return this.transaction || $.Rpc.getTransaction(this.tid);
         }
     });
-    
+
     $.Rpc.ExceptionEvent = $.inherit($.Rpc.RemotingEvent, {
         status: false,
         type: 'exception'
@@ -146,12 +146,12 @@
         'event':  $.Rpc.Event,
         'exception':  $.Rpc.ExceptionEvent
     };
-    
+
     //Provider
     $.Rpc.Provider = $.inherit($.util.Observable, {
-        
+
         priority: 1,
-        
+
         constructor : function(config){
             $.extend(this, config);
             this.addEvents(
@@ -162,16 +162,16 @@
             );
             $.Rpc.Provider.superclass.constructor.call(this, config);
         },
-        
+
         isConnected: function(){
             return false;
         },
-        
+
         connect: $.noop,
-        
+
         disconnect: $.noop
     });
-    
+
     $.Rpc.JsonProvider = $.inherit($.Rpc.Provider, {
         parseResponse: function(xhr){
             if(!$.isEmpty(xhr.responseText)){
@@ -182,7 +182,7 @@
             }
             return null;
         },
-    
+
         getEvents: function(xhr){
             var data = null;
             try{
@@ -207,14 +207,14 @@
             return events;
         }
     });
-    
+
     $.Rpc.RemotingProvider = $.inherit($.Rpc.JsonProvider, {
         enableBuffer: 10,
-        
+
         maxRetries: 1,
-        
+
         timeout: undefined,
-    
+
         constructor : function(config){
             $.Rpc.RemotingProvider.superclass.constructor.call(this, config);
             this.addEvents(
@@ -225,7 +225,7 @@
             this.transactions = {};
             this.callBuffer = [];
         },
-        
+
         initAPI : function(){
             var o = this.actions;
             for(var c in o){
@@ -237,11 +237,11 @@
                 }
             }
         },
-        
+
         isConnected: function(){
             return !!this.connected;
         },
-    
+
         connect: function(){
             if(this.url){
                 this.initAPI();
@@ -251,14 +251,14 @@
                 throw 'Error initializing RemotingProvider, no url configured.';
             }
         },
-    
+
         disconnect: function(){
             if(this.connected){
                 this.connected = false;
                 this.fireEvent('disconnect', this);
             }
         },
-    
+
         onData: function(xhr, status, transactions){
             var i, len, e, t;
             if(status === 'success'){
@@ -297,7 +297,7 @@
                 }
             }
         },
-    
+
         getCallData: function(t){
             if (t.form){
                 return {
@@ -315,7 +315,7 @@
                 };
             }
         },
-    
+
         doSend : function(t){
             var o = {
                 url: this.url,
@@ -324,7 +324,7 @@
                 timeout: this.timeout,
                 dataType: 'json'
             }, callData;
-    
+
             if($.isArray(t)){
                 callData = [];
                 for(var i = 0, len = t.length; i < len; i++){
@@ -342,11 +342,11 @@
                 o.data = encodeURIComponent($.JSON.encode(callData));
                 o.processData = false;
             }
-            
+
             o.complete = this.onData.createDelegate(this, t, true);
             $.ajax(o);
         },
-    
+
         combineAndSend : function(){
             var len = this.callBuffer.length;
             if(len > 0){
@@ -412,7 +412,7 @@
                     data = args.slice(0, len);
                 }
             }
-            
+
             // Get callbacks
             if (args[len+1] && $.isFunction(args[len+1])){
                 //we have failure callback after success one
@@ -438,7 +438,7 @@
                 form: form,
                 cb: cb
             });
-    
+
             if(this.fireEvent('beforecall', this, t) !== false){
                 $.Rpc.addTransaction(t);
                 this.queueTransaction(t);
@@ -455,11 +455,11 @@
             };
             return f;
         },
-    
+
         getTransaction: function(opt){
             return opt && opt.tid ? $.Rpc.getTransaction(opt.tid) : null;
         },
-    
+
         doCallback: function(t, e){
             var fn = e.status ? 'success' : 'failure';
             if(t && t.cb){
@@ -473,7 +473,7 @@
             }
         }
     });
-     
+
 })(jQuery);
 
 
