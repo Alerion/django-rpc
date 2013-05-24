@@ -150,9 +150,9 @@ jQuery.override = function(origclass, overrides){
     if(overrides){
         var p = origclass.prototype;
         jQuery.extend(p, overrides);
-        if(jQuery.browser.msie && overrides.hasOwnProperty('toString')){
+        /*if(jQuery.browser.msie && overrides.hasOwnProperty('toString')){
             p.toString = overrides.toString;
-        }
+        }*/
     }
 };
 
@@ -180,7 +180,7 @@ jQuery.inherit = function(){
         }
     };
     var oc = Object.prototype.constructor;
-    
+
     return function(sb, sp, overrides){
         if (jQuery.isObject(sp)) {
             overrides = sp;
@@ -191,7 +191,7 @@ jQuery.inherit = function(){
         }
         var F = function(){
         }, sbp, spp = sp.prototype;
-        
+
         F.prototype = spp;
         sbp = sb.prototype = new F();
         sbp.constructor = sb;
@@ -235,7 +235,7 @@ jQuery.util.Event.prototype = {
             me.listeners.push(l);
         }
     },
-    
+
     createListener: function(fn, scope, o){
         o = o || {}, scope = scope || this.obj;
         var l = {
@@ -246,14 +246,14 @@ jQuery.util.Event.prototype = {
         l.fireFn = h;
         return l;
     },
-    
+
     isListening: function(fn, scope){
         return this.findListener(fn, scope) != -1;
     },
-    
+
     findListener: function(fn, scope){
         var list = this.listeners, i = list.length, l;
-        
+
         scope = scope || this.obj;
         while (i--) {
             l = list[i];
@@ -265,7 +265,7 @@ jQuery.util.Event.prototype = {
         }
         return -1;
     },
-    
+
     removeListener: function(fn, scope){
         var index, l, k, me = this, ret = false;
         if ((index = me.findListener(fn, scope)) != -1) {
@@ -289,7 +289,7 @@ jQuery.util.Event.prototype = {
         }
         return ret;
     },
-    
+
     // Iterate to stop any buffered/delayed events
     clearListeners: function(){
         var me = this, l = me.listeners, i = l.length;
@@ -297,10 +297,10 @@ jQuery.util.Event.prototype = {
             me.removeListener(l[i].fn, l[i].scope);
         }
     },
-    
+
     fire: function(){
         var me = this, args = jQuery.makeArray(arguments), listeners = me.listeners, len = listeners.length, i = 0, l;
-        
+
         if (len > 0) {
             me.firing = true;
             for (; i < len; i++) {
@@ -328,7 +328,7 @@ jQuery.util.Observable = function(){
 jQuery.util.Observable.prototype = {
     // private
     filterOptRe: /^(?:scope|delay|buffer|single)$/,
-    
+
     fireEvent: function(){
         var a = jQuery.makeArray(arguments), ename = a[0].toLowerCase(), me = this, ret = true, ce = me.events[ename], q, c;
         if (me.eventsSuspended === true) {
@@ -336,7 +336,7 @@ jQuery.util.Observable.prototype = {
                 q.push(a);
             }
         }
-        else 
+        else
             if (jQuery.isObject(ce) && ce.bubble) {
                 if (ce.fire.apply(ce, a.slice(1)) === false) {
                     return false;
@@ -357,7 +357,7 @@ jQuery.util.Observable.prototype = {
             }
         return ret;
     },
-    
+
     addListener: function(eventName, fn, scope, o){
         var me = this, e, oe, isF, ce;
         if (jQuery.isObject(eventName)) {
@@ -378,14 +378,14 @@ jQuery.util.Observable.prototype = {
             ce.addListener(fn, scope, jQuery.isObject(o) ? o : {});
         }
     },
-    
+
     removeListener: function(eventName, fn, scope){
         var ce = this.events[eventName.toLowerCase()];
         if (jQuery.isObject(ce)) {
             ce.removeListener(fn, scope);
         }
     },
-    
+
     purgeListeners: function(){
         var events = this.events, evt, key;
         for (key in events) {
@@ -395,7 +395,7 @@ jQuery.util.Observable.prototype = {
             }
         }
     },
-    
+
     addEvents: function(o){
         var me = this;
         me.events = me.events || {};
@@ -409,7 +409,7 @@ jQuery.util.Observable.prototype = {
             Ext.applyIf(me.events, o);
         }
     },
-    
+
     hasListener: function(eventName){
         var e = this.events[eventName.toLowerCase()];
         return jQuery.isObject(e) && e.listeners.length > 0;
@@ -422,13 +422,13 @@ jQuery.util.Observable.prototype.un = jQuery.util.Observable.prototype.removeLis
 //jQuery.util.DelayedTask
 jQuery.util.DelayedTask = function(fn, scope, args){
     var me = this,
-        id,     
+        id,
         call = function(){
             clearInterval(id);
             id = null;
             fn.apply(scope, args || []);
         };
-        
+
     me.delay = function(delay, newFn, newScope, newArgs){
         me.cancel();
         fn = newFn || fn;
