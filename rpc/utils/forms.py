@@ -2,7 +2,9 @@ from django.utils.encoding import force_unicode
 
 
 class AjaxForm(object):
-
+    """
+    Mixin for Django forms to return validation error in dictionary.
+    """
     def get_errors(self):
         output = {}
         for key, value in self.errors.items():

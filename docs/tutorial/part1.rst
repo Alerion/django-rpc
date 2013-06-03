@@ -1,57 +1,15 @@
-
 .. _tutorial-part-1:
 
 Part 1: The Basics
 ==================
 
-Welcome to tutorial. Here we will try to descripe everything you can do with Django RPC application.
-We will create some real application and explain how to use Django RPC.
-Result you can find in `our repo <https://github.com/Alerion/Django-RPC>`_.
-
-
-Starting off
-------------
-
-This tutorial assumes you have created some Django project and installed ``rpc`` application;
-if not see :ref:`installation instructions <installation>`.
-
-Out project is some simple system to work with tickets, very simple. Create ``main`` application in project
-and add some models to ``main/models.py``::
-
-    from django.db import models
-
-
-    class Project(models.Model):
-        title = models.CharField(max_length=250)
-
-        def __unicode__(self):
-            return self.title
-
-
-    class Ticket(models.Model):
-        project = models.ForeignKey(Project)
-        title = models.CharField(max_length=250)
-        description = models.TextField()
-        file = models.FileField(upload_to='uploads/tickets/')
-        created = models.DateTimeField(auto_now_add=True)
-
-        def __unicode__(self):
-            return self.title
-
-
-    class Comment(models.Model):
-        ticket = models.ForeignKey(Ticket)
-        content = models.TextField()
-        created = models.DateTimeField(auto_now_add=True)
-
-We do not need them now. It is just to make out project a little bit real.
 
 First API class
 ---------------
 
 Idea of `RPC <http://en.wikipedia.org/wiki/Remote_procedure_call>`_ to execute some server-side functions
 from client in easy way. In our case we will execute classes' methods from browser with Javascript.
-Lets create some simple class in ``main/actions.py``::
+Lets create some simple class in our ``main`` application. Create ``main/actions.py`` with following code::
 
     from rpc import RpcRouter, Error, Msg
 
@@ -66,9 +24,14 @@ I hope it is clear what ``hello`` method going to do. As out application was ins
 we will call our classes ``actions`` too. Action method should return Python dictionary
 (with some exceptions, we will discuss this later).
 
+``request.user`` is passed with arguments from request. We do not pass ``request`` object, because
+we do not want that people use them as Django views. But it is easy tell Django RPC to pass request
+if you need or do not pass ``request.user`` if you do not need it.
+
 :class:`~rpc.responses.Msg` and :class:`~rpc.responses.Error`
 are just dictionary subclasses and save response message in ``msg`` and ``error`` keys respectively;
-they are used to make some kind of standard in our project and you can add any extra values to these dictionaries.
+they are used to make some kind of standard in our project and you can add any extra values to these
+dictionaries.
 
 So::
 
@@ -96,17 +59,20 @@ And create ``main/urls.py``::
         url(r'^router/api/$', router.api, name='api'),
     )
 
-:class:`~rpc.RpcRouter` is class that helps "connect" our server-side and client-side. It generates our actions in JS to use in browser,
-pass requests to correct action's method and return its response as HTTP response.
+:class:`~rpc.RpcRouter` is class that helps "connect" our server-side and client-side. It generates
+some Javascript to use our actions in browser, passes requests to correct action's method and returns
+its response to our callback.
 
-First argument is URL-pattern name, or something we can pass to Django ``reverse`` function to get URL, that client should use to send requests. You can see this URL-pattern in ``main/urls.py``.
+First argument is URL-pattern name, or something we can pass to Django ``reverse`` function to get URL,
+that client should use to send requests. You can see this URL-pattern in ``main/urls.py``.
 ``main:router`` is used because our application URL-pattern is added with ``main`` namespace.
 ``main:api`` URL-pattern is used to load Javascript objects on page, later we will see what is going on here.
 
 Second argument is dictionary mapping our action classes with names we age going to use in Javascript.
-In our example we will something like this::
+In our example we will use something like this::
 
     MainApi.hello('username')
+
 
 Using Rpc
 ---------
@@ -130,7 +96,44 @@ We can call our method::
 
 You should see alert with messages "Hellp, Username".
 
-One more example of usage
--------------------------
 
-Action method can have optional arguments or `*args`.
+Default arguments and *args
+---------------------------
+
+Action method can have optional arguments or accept ``*args``. Pay attention that ``user`` is passed as
+keyword argument, so you should accept ``**kwargs`` according to Python syntax.
+
+Lets add new method to our ``MainApiClass`` class::
+
+    def func1(self, val, d='default', *args, **kwargs):
+        print 'val =', val
+        print 'd =', d
+        print 'args =', args
+        return Msg(u'func1')
+
+It does nothing, just show passed arguments.
+
+Lets execute in bowser following JS code::
+
+    MainApi.func1(1, 2, 3, 4, 5)
+
+In Django dev-server output you can see::
+
+    val = 1
+    d = 2
+    args = (3, 4, 5)
+
+Now execute::
+
+    MainApi.func1(1)
+
+You will see::
+
+    val = 1
+    d = default
+    args = ()
+
+If you execute ``MainApi.func1()``, you will get error "Incorrect arguments number".
+
+I think is clear what happens. You can play with different arguments number using
+our example project from repo.

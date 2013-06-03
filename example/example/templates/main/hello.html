@@ -4,11 +4,15 @@
     {{ block.super }}
     <script src="{% url 'main:api' %}"></script>
     <script>
+    /*MainApi.hello('Username', function(response, transaction){
+        console.log(sb)
+        alert(resp.msg);
+    });*/
+
     jQuery(function($){
-        $('#send1').click(function(){
-            MainApi.hello($('#username').val(), function(resp, sb){
-                alert(resp.msg);
-            });
+        $('#send2').click(function(){
+            var args = eval('['+$('#func_arguments').val()+']');
+            MainApi.func1.apply(this, args);
             return false;
         });
     });
@@ -16,11 +20,6 @@
 {% endblock %}
 
 {% block content %}
-    <form class="form-inline">
-        <input type="text" id="username" placeholder="username" value="%username%">
-        <button id="send1" class="btn">Send</button>
-    </form>
-
     <form class="form-inline">
         <input type="text" id="func_arguments" placeholder="arguments" value="1, 2, 3, 4, 5">
         <button id="send2" class="btn">Send</button>

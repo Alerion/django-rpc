@@ -1,4 +1,3 @@
-
 .. _installation:
 
 Installation
@@ -6,8 +5,14 @@ Installation
 
 You can load application from https://github.com/Alerion/Django-RPC.
 
-1. Add ``rpc`` application to ``INSTALLED_APPS``. Now all required JS files are accessible with Django
-``staticfiles`` application.
+1. Add ``rpc`` application to ``INSTALLED_APPS`` settings::
+
+    INSTALLED_APPS = (
+        ...
+        'rpc',
+    )
+
+Now all required JS files are accessible via Django ``staticfiles`` application.
 
 2. In your base templates add required JS scripts::
 
@@ -20,7 +25,7 @@ You can load application from https://github.com/Alerion/Django-RPC.
 
     //Show error message for RPC exceptions
     jQuery.Rpc.on('exception', function(event){
-        alert('Error during RPC request!');
+        alert('Error during RPC request: '+event.message);
     });
 
-4. Do not forget about CSRF for Ajax.
+4. Do not forget about CSRF for Ajax requests.
