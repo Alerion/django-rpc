@@ -4,6 +4,7 @@ from actions import router
 
 urlpatterns = patterns('example.main.views',
     url(r'^$', 'index', name='index'),
+    url(r'^test_batch/$', 'test_batch', name='test_batch'),
     url(r'^hello/$', 'hello', name='hello'),
     url(r'^form/$', 'form', name='form'),
     url(r'^router/$', router, name='router'),

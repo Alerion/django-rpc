@@ -3,9 +3,16 @@
 Django RPC documentation
 ========================
 
-Django RPC for jQuery. Allows execute some server-side functions with Javascript in your browser.
+Django RPC for jQuery. Allows execute some server-side class methods with Javascript in your browser.
 
-Inspired by Ext.Direct.
+Also you can submit forms with `jQuery Form Plugin <http://malsup.com/jquery/form/>`_.
+
+It also supports call batching. Django RPC batches together calls which are received within
+a configurable time frame and sends them in a single request.
+
+You can easy move you current views to RPC methods and use Django RPC instead of mess of AJAX requests.
+
+Inspired by Ext.Direct from ExtJs 3.
 
 
 Support

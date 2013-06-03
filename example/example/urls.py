@@ -4,7 +4,8 @@ from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = patterns('',
-    url(r'^', include('example.main.urls', 'main'))
+    url(r'^', include('example.main.urls', 'main')),
+    url(r'^tricks/', include('example.tricks.urls', 'tricks')),
 )
 
 if settings.DEBUG:

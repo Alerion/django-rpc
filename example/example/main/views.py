@@ -10,6 +10,10 @@ def hello(request):
     return TemplateResponse(request, 'main/hello.html')
 
 
+def test_batch(request):
+    return TemplateResponse(request, 'main/test_batch.html')
+
+
 def form(request):
     context = {
         'form': FeedbackForm()

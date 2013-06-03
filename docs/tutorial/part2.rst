@@ -45,6 +45,8 @@ Lets add new method to out ``MainApiClass`` for handling form::
         else:
             return Error(form.get_errors())
 
+    submit._form_handler = True
+
 It is really simple. Remember that :class:`~rpc.responses.Error` and :class:`~rpc.responses.Msg`
 are just a dictionary. If you submit empty form, you will get such response::
 
@@ -61,11 +63,16 @@ If form is valid, you will get::
         "msg": "Thank you for feedback."
     }
 
+``submit._form_handler = True`` tells that this method handles form submit. Otherwise you will get
+error about incorrect arguments number.
+
 
 Javascript code
 ---------------
 
-Now lets make it works. Add following to your page::
+Now lets make it works. Add following to your page:
+
+.. code-block:: javascript
 
     jQuery(function($){
         $('#feedback_form').ajaxForm({
