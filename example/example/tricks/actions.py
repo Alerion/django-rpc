@@ -1,4 +1,4 @@
-from rpc import RpcRouter, Error, Msg
+from djangorpc import RpcRouter, Error, Msg
 
 
 class TricksApiClass(object):

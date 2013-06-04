@@ -1,7 +1,7 @@
 Base classes
 ============
 
-.. automodule:: rpc
+.. automodule:: djangorpc
     :members:
     :show-inheritance:
     :member-order: bysource

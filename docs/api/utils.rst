@@ -1,7 +1,7 @@
 Utils
 =====
 
-.. automodule:: rpc.utils.forms
+.. automodule:: djangorpc.utils.forms
     :members:
     :show-inheritance:
     :member-order: bysource

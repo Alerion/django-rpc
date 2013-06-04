@@ -18,7 +18,7 @@ We'll create a page with button, which calls server-side method using Django RPC
 
 Create `actions.py` in `someapp` application of our `someproject` project with following code:
 
-    from rpc import RpcRouter, Error, Msg
+    from djangorpc import RpcRouter, Error, Msg
 
 
     class MainApiClass(object):

@@ -1,7 +1,7 @@
 Responses
 =========
 
-.. automodule:: rpc.responses
+.. automodule:: djangorpc.responses
     :members:
     :show-inheritance:
     :member-order: bysource

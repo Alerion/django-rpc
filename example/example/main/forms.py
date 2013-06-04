@@ -1,5 +1,5 @@
 from django import forms
-from rpc.utils.forms import AjaxForm
+from djangorpc.utils.forms import AjaxForm
 
 
 class FeedbackForm(forms.Form, AjaxForm):

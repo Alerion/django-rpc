@@ -24,7 +24,7 @@ I'll show you few ways how to pass extra arguments from request to our methods.
 Router level
 ------------
 
-You can subclass :class:`rpc.RpcRouter` and rewrite ``extra_kwargs`` method. Original method looks like this::
+You can subclass :class:`djangorpc.RpcRouter` and rewrite ``extra_kwargs`` method. Original method looks like this::
 
     def extra_kwargs(self, request, *args, **kwargs):
         return {
@@ -37,7 +37,7 @@ method. You will see this later.
 
 Lets add ``request`` here::
 
-    from rpc import RpcRouter, Error, Msg
+    from djangorpc import RpcRouter, Error, Msg
 
     class CustomRouter(RpcRouter):
 

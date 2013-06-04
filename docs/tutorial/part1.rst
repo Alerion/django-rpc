@@ -11,7 +11,7 @@ Idea of `RPC <http://en.wikipedia.org/wiki/Remote_procedure_call>`_ to execute s
 from client in easy way. In our case we will execute classes' methods from browser with Javascript.
 Lets create some simple class in our ``main`` application. Create ``main/actions.py`` with following code::
 
-    from rpc import RpcRouter, Error, Msg
+    from djangorpc import RpcRouter, Error, Msg
 
 
     class MainApiClass(object):
@@ -28,7 +28,7 @@ we will call our classes ``actions`` too. Action method should return Python dic
 we do not want that people use them as Django views. But it is easy tell Django RPC to pass request
 if you need or do not pass ``request.user`` if you do not need it.
 
-:class:`~rpc.responses.Msg` and :class:`~rpc.responses.Error`
+:class:`~djangorpc.responses.Msg` and :class:`~djangorpc.responses.Error`
 are just dictionary subclasses and save response message in ``msg`` and ``error`` keys respectively;
 they are used to make some kind of standard in our project and you can add any extra values to these
 dictionaries.
@@ -59,7 +59,7 @@ And create ``main/urls.py``::
         url(r'^router/api/$', router.api, name='api'),
     )
 
-:class:`~rpc.RpcRouter` is class that helps "connect" our server-side and client-side. It generates
+:class:`~djangorpc.RpcRouter` is class that helps "connect" our server-side and client-side. It generates
 some Javascript to use our actions in browser, passes requests to correct action's method and returns
 its response to our callback.
 
