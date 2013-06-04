@@ -3,7 +3,13 @@
 Installation
 ============
 
-You can load application from https://github.com/Alerion/Django-RPC.
+Install using pip::
+
+    pip install DjangoRpc
+
+...or clone the project from github::
+
+    https://github.com/Alerion/Django-RPC.git
 
 1. Add ``djangorpc`` application to ``INSTALLED_APPS`` settings::
 
