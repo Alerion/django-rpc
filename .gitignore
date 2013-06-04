@@ -1,6 +1,9 @@
-*.pyc
 *.*~
-env/
+*.pyc
+*.sublime-*
 build/
 database.sqlite
-*.sublime-*
+dist/
+DjangoRpc.egg-info/
+env/
+MANIFEST

@@ -1,14 +1,23 @@
-from distutils.core import setup
+import os
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    from ez_setup import use_setuptools
+
+    use_setuptools()
+
+README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 setup(
     name='DjangoRpc',
     version='0.1.0',
+    license='Apache License 2.0',
     author='Dmitriy Kostochko',
     author_email='alerion.um@gmail.com',
-    packages=['djangorpc'],
+    packages=find_packages(exclude=['example', 'example.*']),
     url='http://pypi.python.org/pypi/DjangoRpc/',
-    license='LICENSE.txt',
+    keywords='Django, RPC, API, jQuery',
     description='Django RPC for jQuery',
-    long_description=open('README.rst').read(),
+    long_description=README,
     install_requires=[],
 )
