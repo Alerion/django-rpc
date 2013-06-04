@@ -1,3 +1,7 @@
+*********
+DjangoRpc
+*********
+
 Django RPC for jQuery. Allows execute some server-side class methods with Javascript in your browser.
 
 Also you can submit forms with jQuery Form Plugin.
@@ -16,7 +20,7 @@ Let's take a look at a quick example how to use Django RPC application.
 
 We'll create a page with button, which calls server-side method using Django RPC.
 
-Create `actions.py` in `someapp` application of our `someproject` project with following code:
+Create ``actions.py`` in ``someapp`` application of our ``someproject`` project with following code::
 
     from djangorpc import RpcRouter, Error, Msg
 
@@ -26,7 +30,7 @@ Create `actions.py` in `someapp` application of our `someproject` project with f
         def hello(self, username, user):
             return Msg(u'Hello, %s!' % username)
 
-Add this to `urls.py`:
+Add this to ``urls.py``::
 
     from django.conf.urls import patterns, include, url
     from .actions import router
@@ -37,7 +41,7 @@ Add this to `urls.py`:
         url(r'^router/api/$', router.api, name='api'),
     )
 
-Add following code to page template:
+Add following code to page template::
 
     <script src="{% url 'main:api' %}"></script>
     <script>

@@ -1,5 +1,6 @@
 *.pyc
 *.*~
-env/*
+env/
+build/
 database.sqlite
 *.sublime-*
