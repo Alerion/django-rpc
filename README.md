@@ -9,7 +9,8 @@ You can easy move you current views to RPC methods and use Django RPC instead of
 Inspired by Ext.Direct from ExtJs 3.
 
 
-##Example
+Example
+=======
 
 Let's take a look at a quick example how to use Django RPC application.
 
