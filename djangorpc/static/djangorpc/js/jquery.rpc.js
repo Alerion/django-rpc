@@ -261,6 +261,7 @@
 
         onData: function(xhr, status, transactions){
             var i, len, e, t;
+
             if(status === 'success'){
                 var events = this.getEvents(xhr);
                 for(i = 0, len = events.length; i < len; i++){
@@ -268,7 +269,7 @@
                     t = this.getTransaction(e);
                     this.fireEvent('data', this, e);
                     if(t){
-                        this.doCallback(t, e, true);
+                        this.doCallback(t, e);
                         $.Rpc.removeTransaction(t);
                     }
                 }
@@ -290,7 +291,7 @@
                         });
                         this.fireEvent('data', this, e);
                         if(t){
-                            this.doCallback(t, e, false);
+                            this.doCallback(t, e);
                             $.Rpc.removeTransaction(t);
                         }
                     }
@@ -462,13 +463,14 @@
 
         doCallback: function(t, e){
             var fn = e.status ? 'success' : 'failure';
+
             if(t && t.cb){
                 var hs = t.cb,
                     result = $.isDefined(e.result) ? e.result : e.data;
-                if($.isFunction(hs)){
+                if($.isFunction(hs) && e.status){
                     hs(result, e);
                 } else{
-                    hs[fn].apply(hs.scope, [result, e]);
+                    hs[fn] && hs[fn].apply(hs.scope, [result, e]);
                 }
             }
         }

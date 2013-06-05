@@ -8,4 +8,6 @@ API Guide
 
     base
     responses
+    decorators
+    exceptions
     utils

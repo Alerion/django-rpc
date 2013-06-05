@@ -14,6 +14,10 @@ def test_batch(request):
     return TemplateResponse(request, 'main/test_batch.html')
 
 
+def js_api(request):
+    return TemplateResponse(request, 'main/js_api.html')
+
+
 def form(request):
     context = {
         'form': FeedbackForm()

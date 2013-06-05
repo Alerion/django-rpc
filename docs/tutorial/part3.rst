@@ -1,140 +1,58 @@
 .. _tutorial-part-3:
 
-*********************
-Part 3: Useful tricks
-*********************
-
-Here I'll try show some useful trick that can save you time and explain how Django RPC works.
-
-Real examples of code you can find in `example project <https://github.com/Alerion/Django-RPC/tree/master/example/>`_,
-`tricks` app.
+Part 3: Javascript API
+======================
 
 
-Passing extra arguments
-=======================
+Method calling
+--------------
 
-Real situation is when you need access to Django request object in your RPC method.
-My idea was do not pass ``request`` to hide how we do method call. So in future we can
-use our action class for some other API or send request via WebSocket+Torando
-(In current version you can't do this, but with a little patching I did for one project).
+You can call method without callback:
 
-I'll show you few ways how to pass extra arguments from request to our methods.
+.. code-block:: javascript
 
+    MainApi.hello(1, 2, 3);
 
-Router level
-------------
+With success callback:
 
-You can subclass :class:`djangorpc.RpcRouter` and rewrite ``extra_kwargs`` method. Original method looks like this::
+.. code-block:: javascript
 
-    def extra_kwargs(self, request, *args, **kwargs):
-        return {
-            'user': request.user
-        }
+    MainApi.hello(1, 2, 3, function(){
+        console.log('success', arguments);
+    }
 
-You can see ``*args`` and ``**kwargs``. This is important here. These are arguments parsed with
-Django URL patterns that are passed to views. So you can get some ID from URL and pass it to every
-method. You will see this later.
+Or with success and failure callbacks:
 
-Lets add ``request`` here::
+.. code-block:: javascript
 
-    from djangorpc import RpcRouter, Error, Msg
-
-    class CustomRouter(RpcRouter):
-
-        def extra_kwargs(self, request, *args, **kwargs):
-            print args, kwargs
-            return {
-                'request': request,
-                'user': request.user
-            }
-
-    custom_router = CustomRouter()
-
-Now create some actions classes for testing. Do not forget about new ``request`` arguments::
-
-    class TricksApiClass(object):
-
-        def func1(self, user, request):
-            return Msg(u'func1')
-
-
-    class TricksOneApiClass(object):
-
-        def func2(self, val, **kwargs):
-            return Msg(u'func2')
-
-And add theme to our router::
-
-    custom_router = CustomRouter('tricks:custom_router', {
-        'TricksApi': TricksApiClass(),
-        'TricksOneApi': TricksOneApiClass()
+    MainApi.hello(1, 2, 3, function(){
+        console.log('success', arguments);
+    }, function(){
+        console.log('error', arguments);
     })
 
-Just to have full example, lets show ``urls.py``::
 
-    from django.conf.urls import patterns, include, url
-    from actions import custom_router
+Events
+------
 
+All responses are handled as events. You can subscribe to exceptions:
 
-    urlpatterns = patterns('example.tricks.views',
-        url(r'^$', 'index', name='index'),
-        url(r'^custom_router/$', custom_router, name='custom_router'),
-        url(r'^custom_router/api/$', custom_router.api, name='custom_router_api'),
-    )
+.. code-block:: javascript
 
-and our template::
+    jQuery.Rpc.on('exception', function(event){
+        alert('Error during RPC request: '+event.message);
+    });
 
-    <script src="{% url 'tricks:custom_router_api' %}"></script>
-    <script>
-        TricksApi.func1(function(response){
-            console.log(response.msg);
-        });
+or to all events:
 
-        TricksOneApi.func2(1, function(response){
-            console.log(response.msg);
-        });
-    </script>
+.. code-block:: javascript
 
-It works, every method get ``request`` object.
+    jQuery.Rpc.on('event', function(event){
+        console.log(event);
+    });
 
 
-Action level
-------------
+jquery.util.js
+--------------
 
-TBD
-
-
-Method level
-------------
-
-TBD
-
-
-Decorators
-==========
-
-TBD
-
-
-RpcExceptionEvent
-=================
-
-TBD
-
-
-Passing arguments from URL
-==========================
-
-TBD
-
-
-_pre_execute
-============
-
-TBD
-
-
-Turn off butch
-==============
-
-TBD
+Contains different useful utilities used by jQuery.Rpc.

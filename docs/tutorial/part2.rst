@@ -26,7 +26,7 @@ Lets crate some feedback form in ``main/forms.py``::
         def send(self):
             print 'Send!'
 
-You can see mixin :class:`~rpc.utils.forms.AjaxForm`, it just allows easy get validation errors
+You can see mixin :class:`~djangorpc.utils.forms.AjaxForm`, it just allows easy get validation errors
 in dictionary and return then in response.
 
 We hope you know how to create page and show this form using Django.
@@ -37,17 +37,21 @@ Create action method
 
 Lets add new method to out ``MainApiClass`` for handling form::
 
-    def submit(self, rdata, user):
-        form = FeedbackForm(rdata)
-        if form.is_valid():
-            form.send()
-            return Msg(u'Thank you for feedback.')
-        else:
-            return Error(form.get_errors())
+    from djangorpc.decorators import form_handler
 
-    submit._form_handler = True
 
-It is really simple. Remember that :class:`~rpc.responses.Error` and :class:`~rpc.responses.Msg`
+    class MainApiClass(object):
+
+        @form_handler
+        def submit(self, rdata, user):
+            form = FeedbackForm(rdata)
+            if form.is_valid():
+                form.send()
+                return Msg(u'Thank you for feedback.')
+            else:
+                return Error(form.get_errors())
+
+It is really simple. Remember that :class:`~djangorpc.responses.Error` and :class:`~djangorpc.responses.Msg`
 are just a dictionary. If you submit empty form, you will get such response::
 
     {
@@ -63,7 +67,7 @@ If form is valid, you will get::
         "msg": "Thank you for feedback."
     }
 
-``submit._form_handler = True`` tells that this method handles form submit. Otherwise you will get
+Decorator :func:`~djangorpc.decorators.form_handler` tells that this method handles form submit. Otherwise you will get
 error about incorrect arguments number.
 
 

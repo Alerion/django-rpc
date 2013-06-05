@@ -3,6 +3,7 @@
 {% block js %}
     {{ block.super }}
     <script src="{% url 'tricks:custom_router_api' %}"></script>
+    <script src="{% url 'tricks:custom_router_one_api' %}"></script>
     <script>
         TricksApi.func1(function(response){
             console.log(response.msg);
@@ -11,6 +12,26 @@
         TricksOneApi.func2(1, function(response){
             console.log(response.msg);
         });
+
+        TricksTwoApi.func3(function(response, sb){
+            console.log(response.msg);
+        });
+
+        TricksThreeApi.func4(function(response, sb){
+            console.log(response.msg);
+        })
+
+        TricksThreeApi.func5(function(response, sb){
+            console.log(response.msg);
+        })
+
+        TricksThreeApi.func6(function(response, sb){
+            console.log(response.msg);
+        })
+
+        TricksThreeApi.func7(function(response, sb){
+            console.log(response.msg);
+        })
     </script>
 {% endblock %}
 

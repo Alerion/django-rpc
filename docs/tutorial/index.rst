@@ -16,3 +16,4 @@ if not see :ref:`installation instructions <installation>`.
    part1
    part2
    part3
+   part4
