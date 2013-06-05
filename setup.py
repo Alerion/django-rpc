@@ -15,7 +15,7 @@ setup(
     author='Dmitriy Kostochko',
     author_email='alerion.um@gmail.com',
     packages=find_packages(exclude=['example', 'example.*']),
-    url='http://pypi.python.org/pypi/DjangoRpc/',
+    url='https://github.com/Alerion/Django-RPC',
     keywords='Django, RPC, API, jQuery',
     description='Django RPC for jQuery',
     long_description=README,

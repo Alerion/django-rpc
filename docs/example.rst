@@ -17,6 +17,10 @@ Create ``actions.py`` in ``someapp`` application of our ``someproject`` project 
         def hello(self, username, user):
             return Msg(u'Hello, %s!' % username)
 
+    router = RpcRouter('main:router', {
+        'MainApi': MainApiClass(),
+    })
+
 Add this to ``urls.py``::
 
     from django.conf.urls import patterns, include, url

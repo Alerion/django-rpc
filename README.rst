@@ -12,6 +12,8 @@ You can easy move you current views to RPC methods and use Django RPC instead of
 
 Inspired by Ext.Direct from ExtJs 3.
 
+`Package Documentation <https://django-rpc.readthedocs.org/>`_
+
 Installation
 ============
 
@@ -86,3 +88,10 @@ Add following code to page template::
     </script>
 
 Reload page and you will see alert with message "Hello, username!".
+
+Contributing
+============
+
+Development for this software happend on github, and the main fork is currently at https://github.com/chrisglass/xhtml2pdf
+
+Contributions are welcome in any format, but using github's pull request system is very highly preferred since it makes review and integration much easier.
