@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% url 'main:api' %}"></script>
+    <script>
+    jQuery.Rpc.on('event', function(event){
+        console.log(event);
+    });
+
+    jQuery(function($){
+        MainApi.hello(1, 2, 3);
+        MainApi.hello(1, 2, 3, function(){
+            console.log('success', arguments);
+        }, function(){
+            console.log('error', arguments);
+        })
+
+        MainApi.hello(1, function(){
+            console.log('success', arguments);
+        }, function(){
+            console.log('error', arguments);
+        })
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

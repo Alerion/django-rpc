@@ -6,12 +6,52 @@
         <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
         <link href="{% static 'css/base.css' %}" rel="stylesheet">
 
-        <script src="{% static 'rpc/js/jquery-1.7.2.min.js' %}"></script>
-        <script src="{% static 'rpc/js/jquery.util.js' %}"></script>
-        <script src="{% static 'rpc/js/jquery.rpc.js' %}"></script>
-        <script src="{% static 'rpc/js/jquery.form.js' %}"></script>
+        {% block js %}
+        <script src="{% static 'djangorpc/js/jquery-1.9.1.min.js' %}"></script>
+        <script src="{% static 'djangorpc/js/jquery.util.js' %}"></script>
+        <script src="{% static 'djangorpc/js/jquery.rpc.js' %}"></script>
+        <script src="{% static 'djangorpc/js/jquery.form.js' %}"></script>
 
         <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+        <script>
+            // using jQuery
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie != '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            var csrftoken = getCookie('csrftoken');
+
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+            $.ajaxSetup({
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type)) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            //Show error message for RPC exceptions
+            jQuery.Rpc.on('exception', function(event){
+                alert('Error during RPC request: '+event.message);
+            });
+        </script>
+        {% endblock %}
     </head>
     <body>
         <div class="navbar navbar-fixed-top">
@@ -22,12 +62,14 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <a class="brand" href="#">Django RPC</a>
+                    <a class="brand" href="/">Django RPC demo</a>
                     <div class="nav-collapse">
                         <ul class="nav">
-                            <li class="active"><a href="#">Home</a></li>
-                            <li><a href="#about">About</a></li>
-                            <li><a href="#contact">Contact</a></li>
+                            <li><a href="{% url 'main:hello' %}">1. Hello, world!</a></li>
+                            <li><a href="{% url 'main:form' %}">2. Form</a></li>
+                            <li><a href="{% url 'main:js_api' %}">3. JS API</a></li>
+                            <li><a href="{% url 'main:test_batch' %}">Test batch</a></li>
+                            <li><a href="{% url 'tricks:index' %}">Tricks</a></li>
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -35,8 +77,7 @@
         </div>
 
         <div class="container">
-            <h1>Bootstrap starter template</h1>
-            <p>Use this document as a way to quick start any new project.<br> All you get is this message and a barebones HTML document.</p>
+            {% block content %}{% endblock %}
         </div> <!-- /container -->
     </body>
 </html>

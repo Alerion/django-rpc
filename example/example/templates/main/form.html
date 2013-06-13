@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% url 'main:api' %}"></script>
+    <script>
+    jQuery(function($){
+        $('#feedback_form').ajaxForm({
+            type: 'RPC',
+            api: {
+                submit: MainApi.submit
+            },
+            success: function(data, rpc_response, $form){
+                if (data.success){
+                    $form.resetForm();
+                } else {
+                    for (key in data.error){
+                        var $field = $('input[name="'+key+'"], textarea[name="'+key+'"]', $form);
+                        var error = '<p class="error_list">'+data.error[key]+'</p>';
+                        if ($field.length){
+                            $field.before(error);
+                        }else{
+                            $('.global-errors', $form).prepend(error);
+                        }
+                    };
+                }
+            },
+            beforeSubmit: function(formData, $Form, options){
+                $('p.error_list', $Form).remove();
+            }
+        });
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <form action="." method="post" id="feedback_form">
+        <div class="global-errors"></div>
+        <table>
+        {{ form }}
+        <tr>
+            <td></td><td><button>Submit</button></td>
+        </tr>
+        </table>
+    </form>
+{% endblock %}

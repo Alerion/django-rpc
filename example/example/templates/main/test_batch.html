@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% url 'main:api' %}"></script>
+    <script>
+        MainApi.func1(1, 2, 3);
+        MainApi.func1(1, 2);
+        MainApi.func1(1);
+    </script>
+{% endblock %}
+
+{% block content %}
+    <p>Open Chrome Dev console or Firebug and you can see that only one request was sent for this code:</p>
+    <pre><code>
+        MainApi.func1(1, 2, 3);
+        MainApi.func1(1, 2);
+        MainApi.func1(1);
+    </code></pre>
+{% endblock %}

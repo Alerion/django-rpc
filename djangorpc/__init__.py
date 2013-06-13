@@ -19,7 +19,7 @@ class RpcRouter(object):
         :param url: URL pattern name or something you can pass to ``reverse``.
             Used to get URL which router is connected.
         :param actions: Action classes router should add to RPC API
-        :param enable_buffer: Define client should send requests in a butch
+        :param enable_buffer: Define client should send requests in a batch
         """
         self.url = url
         self.actions = actions
@@ -146,7 +146,7 @@ class RpcRouter(object):
 
         args = []
         for val in (rd.get('data') or []):
-            if isinstance(val, dict) and not isinstance(val, MultiValueDict):
+            if isinstance(val, dict) and not isinstance(val, RpcMultiValueDict):
                 val = RpcMultiValueDict(val)
             args.append(val)
 

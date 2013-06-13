@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% url 'main:api' %}"></script>
+    <script>
+    MainApi.hello('Username', function(response, transaction){
+        alert(response.msg);
+    });
+
+    jQuery(function($){
+        $('#send2').click(function(){
+            var args = eval('['+$('#func_arguments').val()+']');
+            MainApi.func1.apply(this, args);
+            return false;
+        });
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <form class="form-inline">
+        <input type="text" id="func_arguments" placeholder="arguments" value="1, 2, 3, 4, 5">
+        <button id="send2" class="btn">Send</button>
+    </form>
+{% endblock %}

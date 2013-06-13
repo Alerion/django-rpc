@@ -1,7 +1,11 @@
-*.pyc
 *.*~
-test/settings_local.py
-env/*
+*.pyc
+*.sublime-*
+build/
 database.sqlite
 *.sublime-*
 .idea/*
+dist/
+DjangoRpc.egg-info/
+env/
+MANIFEST

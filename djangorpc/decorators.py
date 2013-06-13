@@ -13,13 +13,13 @@ def copy_method_attributes(from_method, to_method):
 def add_request_to_kwargs(method):
     """
     This is decorator for adding request to passed arguments.
-    For example:
+    For example::
 
-    class MainApiClass(object):
+        class MainApiClass(object):
 
-        @add_request_to_kwargs
-        def func2(self, user, request):
-            return Msg(u'func2')
+            @add_request_to_kwargs
+            def func2(self, user, request):
+                return Msg(u'func2')
     """
     def extra_kwargs_func(request, *args, **kwargs):
         return dict(request=request)
@@ -31,7 +31,13 @@ def add_request_to_kwargs(method):
 def login_required(method):
     """
     This docorator add _pre_execute function for checking if user
-    is authenticated
+    is authenticated::
+
+        class MainApiClass(object):
+
+            @login_required
+            def func2(self, user):
+                return Msg(u'func2')
     """
     def check_login(func, *args, **kwargs):
         user = kwargs.get('user')
@@ -45,7 +51,19 @@ def login_required(method):
 
 def form_handler(method):
     """
-    This decorator mark method as form handler
+    This decorator mark method as form handler.
+    For example::
+
+        class MainApiClass(object):
+
+            @form_handler
+            def submit(self, rdata, user):
+                form = FeedbackForm(rdata)
+                if form.is_valid():
+                    form.send()
+                    return Msg(u'Thank you for feedback.')
+                else:
+                    return Error(form.get_errors())
     """
     method._form_handler = True
     return method
