@@ -82,15 +82,15 @@ jQuery.JSON = {
     },
     encodeDate: function(o){
         return '"' + o.getFullYear() + "-" +
-        pad(o.getMonth() + 1) +
+        this.pad(o.getMonth() + 1) +
         "-" +
-        pad(o.getDate()) +
+        this.pad(o.getDate()) +
         "T" +
-        pad(o.getHours()) +
+        this.pad(o.getHours()) +
         ":" +
-        pad(o.getMinutes()) +
+        this.pad(o.getMinutes()) +
         ":" +
-        pad(o.getSeconds()) +
+        this.pad(o.getSeconds()) +
         '"';
     },
     encode: function(o){
