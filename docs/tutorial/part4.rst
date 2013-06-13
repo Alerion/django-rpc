@@ -10,6 +10,8 @@ Real examples of code you can find in `example project <https://github.com/Aleri
 `tricks` app.
 
 
+.. _passing_extra_arguments:
+
 Passing extra arguments
 =======================
 
@@ -163,10 +165,74 @@ For required login you use decorator :func:`~djangorpc.decorators.login_required
 Passing arguments from URL
 ==========================
 
-TBD
+This tricks allow add argument from URL to every RPC request without changing any JS code.
 
+Why may you need this?
+----------------------
+
+For instance, we have some browser game. User can create battle, other can join this battle
+and everything happens on page with URL '/battle/100500/', where `100500` is ID of some row
+in out `battle` table in database.
+
+You do not want pass battle ID for every RPC call, especially if your `GameApi.move`, `GameApi.hit`,
+`GameApi.jump`, `GameApi.next_turn` and other are used a lot in your JS.
+
+
+What to do?
+-----------
+
+Django RPC allows you easy pass extra arguments(our `battle_id`) in URL. All these arguments are
+passed to method, that allows you :ref:`pass extra arguments <passing_extra_arguments>`.
+
+Example
+-------
+
+At first let our URL-patterns accept arguments from URL::
+
+    urlpatterns = patterns('example.game.views',
+        url(r'^battle/(?P<battle_id>\d+)/$', 'battle', name='battle'),
+        url(r'^router/(?P<battle_id>\d+)/$', router, name='router'),
+        url(r'^router/api/(?P<battle_id>\d+)/$', router.api, name='api'),
+    )
+
+`battle` view is not related to RPC, just want to show how harmoniously it is.
+
+Our `actions.py` can be like this::
+
+    from djangorpc import RpcRouter, Error, Msg
+    from djangorpc.exceptions import RpcExceptionEvent
+
+
+    class GameApiClass(object):
+
+        def move(self, x, y, battle, user):
+            battle.move(x, y, user)
+            return {}
+
+        def _extra_kwargs(self, request, *args, **kwargs):
+            try:
+                battle = Battle.objects.get(pk=kwargs['battle_id'])
+            except Battle.DoesNotExist:
+                raise RpcExceptionEvent('Invalid battle id!')
+
+            return {
+                'battle': battle
+            }
+
+    router = RpcRouter('game:router', {
+        'GameApi': GameApiClass(),
+    })
+
+And in our template just use `battle_id` to create URL to our rpc script::
+
+    <script src="{% url 'game:api' battle_id %}"></script>
+    <script>
+        GameApi.move(1, 2);
+    </script>
 
 _pre_execute
 ============
 
-TBD
+If method has `_pre_execute` attribute, it is executed before method call.
+It can be use to make some validation. For now it is used for
+:func:`~djangorpc.decorators.login_required` decorator. You can use it to create own decorators.

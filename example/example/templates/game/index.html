@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h4>Battles list</h4>
+<ul>
+    <li><a href="{% url 'game:battle' 1 %}">Battle #1</a></li>
+    <li><a href="{% url 'game:battle' 2 %}">Battle #2</a></li>
+    <li><a href="{% url 'game:battle' 3 %}">Battle #3</a></li>
+    <li><a href="{% url 'game:battle' 4 %}">Battle #4</a></li>
+    <li><a href="{% url 'game:battle' 5 %}">Battle #5</a></li>
+</ul>
+{% endblock %}

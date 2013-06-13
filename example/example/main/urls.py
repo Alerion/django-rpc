@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from actions import router
+from .actions import router
 
 
 urlpatterns = patterns('example.main.views',

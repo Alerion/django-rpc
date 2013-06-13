@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% url 'game:api' battle_id %}"></script>
+    <script>
+    jQuery(function($){
+        $('#move-button').click(function(){
+            GameApi.move(1, 2);
+            return false;
+        });
+    });
+    </script>
+{% endblock %}
+
+
+{% block content %}
+<h4>Battle #{{ battle_id }}</h4>
+<button id="move-button">Move</button>
+{% endblock %}
