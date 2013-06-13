@@ -3,6 +3,8 @@
 *.sublime-*
 build/
 database.sqlite
+*.sublime-*
+.idea/*
 dist/
 DjangoRpc.egg-info/
 env/
