@@ -8,6 +8,7 @@ urlpatterns = patterns('example.main.views',
     url(r'^hello/$', 'hello', name='hello'),
     url(r'^js_api/$', 'js_api', name='js_api'),
     url(r'^form/$', 'form', name='form'),
+    url(r'^upload_form/$', 'upload_form', name='upload_form'),
     url(r'^router/$', router, name='router'),
     url(r'^router/api/$', router.api, name='api'),
 )

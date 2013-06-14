@@ -1,5 +1,5 @@
 from django.template.response import TemplateResponse
-from .forms import FeedbackForm
+from .forms import FeedbackForm, FileForm
 
 
 def index(request):
@@ -23,3 +23,10 @@ def form(request):
         'form': FeedbackForm()
     }
     return TemplateResponse(request, 'main/form.html', context)
+
+
+def upload_form(request):
+    context = {
+        'form': FileForm()
+    }
+    return TemplateResponse(request, 'main/upload_form.html', context)

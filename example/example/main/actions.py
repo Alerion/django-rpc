@@ -1,6 +1,6 @@
 from djangorpc import RpcRouter, Error, Msg
 from djangorpc.decorators import form_handler
-from .forms import FeedbackForm
+from .forms import FeedbackForm, FileForm
 
 
 class MainApiClass(object):
@@ -21,6 +21,15 @@ class MainApiClass(object):
         if form.is_valid():
             form.send()
             return Msg(u'Thank you for feedback.')
+        else:
+            return Error(form.get_errors())
+
+    @form_handler
+    def submit_file(self, rdata, files, user):
+        form = FileForm(rdata, files)
+        if form.is_valid():
+            form.send()
+            return Msg(form.cleaned_data['file'].size)
         else:
             return Error(form.get_errors())
 

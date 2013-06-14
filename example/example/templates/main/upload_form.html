@@ -5,10 +5,10 @@
     <script src="{% url 'main:api' %}"></script>
     <script>
     jQuery(function($){
-        $('#feedback_form').ajaxForm({
+        $('#upload_form').ajaxForm({
             type: 'RPC',
             api: {
-                submit: MainApi.submit
+                submit: MainApi.submit_file
             },
             success: function(data, rpc_response, $form){
                 if (data.error){
@@ -23,6 +23,7 @@
                     };
                 } else {
                     $form.resetForm();
+                    alert('Size '+ data.msg);
                 }
             },
             beforeSubmit: function(formData, $Form, options){
@@ -34,7 +35,7 @@
 {% endblock %}
 
 {% block content %}
-    <form action="." method="post" id="feedback_form">
+    <form action="." method="post" id="upload_form" enctype="multipart/form-data">
         <div class="global-errors"></div>
         {% csrf_token %}
         <table>

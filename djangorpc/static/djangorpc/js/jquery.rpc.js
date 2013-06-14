@@ -305,7 +305,7 @@
                     rpcAction: t.action,
                     rpcMethod: t.method,
                     rpcTID: t.tid,
-                    rpcUpload: $('input:file:enabled[value]', t.form).length > 0
+                    rpcUpload: $('input:file:enabled', t.form).length > 0
                 };
             } else {
                 return {

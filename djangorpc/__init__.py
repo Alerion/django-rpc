@@ -29,17 +29,16 @@ class RpcRouter(object):
         POST = request.POST
 
         if POST.get('rpcAction'):
-            #Forms with upload not supported yet
             requests = {
                 'action': POST.get('rpcAction'),
                 'method': POST.get('rpcMethod'),
                 'data': [dict(POST)],
-                'upload': POST.get('rpcUpload') == 'true',
-                'tid': POST.get('rpcTID')
+                'tid': POST.get('rpcTID'),
+                'upload': POST.get('rpcUpload') == 'true'
             }
 
             if requests['upload']:
-                requests['data'].append(request.FILES)
+                requests['files'] = request.FILES
                 output = simplejson.dumps(self.call_action(requests, request, *args, **kwargs))
                 return HttpResponse('<textarea>%s</textarea>' \
                                     % output)
@@ -149,6 +148,9 @@ class RpcRouter(object):
             if isinstance(val, dict) and not isinstance(val, RpcMultiValueDict):
                 val = RpcMultiValueDict(val)
             args.append(val)
+
+        if 'files' in rd:
+            args.append(rd.get('files'))
 
         extra_kwargs = self.extra_kwargs(request, *args, **kwargs)
         extra_kwargs.update(self.action_extra_kwargs(action, request, *args, **kwargs))

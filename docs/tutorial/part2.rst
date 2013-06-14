@@ -113,3 +113,21 @@ to submit form. This is something like it works in ExtJs, so maybe we will add `
 to load form initial data.
 
 In ``success`` callback we show validation error or success message.
+
+
+Form with files
+---------------
+
+You can submit forms with files to RPC. It works the same way, just action should accept files
+in the second argument. For example::
+
+    class MainApiClass(object):
+
+        @form_handler
+        def submit_file(self, rdata, files, user):
+            form = FileForm(rdata, files)
+            if form.is_valid():
+                form.send()
+                return Msg(form.cleaned_data['file'].size)
+            else:
+                return Error(form.get_errors())
