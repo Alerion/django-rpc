@@ -96,6 +96,6 @@ Reload page and you will see alert with message "Hello, username!".
 Contributing
 ============
 
-Development for this software happend on github, and the main fork is currently at https://github.com/chrisglass/xhtml2pdf
+Development for this software happend on github, and the main fork is currently at https://github.com/Alerion/Django-RPC
 
 Contributions are welcome in any format, but using github's pull request system is very highly preferred since it makes review and integration much easier.
