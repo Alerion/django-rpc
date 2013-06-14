@@ -40,6 +40,9 @@ class RpcHttpResponse(RpcResponse):
 
     def set_cookie(self, key, value='', max_age=None, expires=None, path='/',
                    domain=None, secure=False):
+        """
+        Set cookie.
+        """
         self.cookies[key] = value
         if max_age is not None:
             self.cookies[key]['max-age'] = max_age

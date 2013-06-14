@@ -230,9 +230,27 @@ And in our template just use `battle_id` to create URL to our rpc script::
         GameApi.move(1, 2);
     </script>
 
+
 _pre_execute
 ============
 
 If method has `_pre_execute` attribute, it is executed before method call.
 It can be use to make some validation. For now it is used for
 :func:`~djangorpc.decorators.login_required` decorator. You can use it to create own decorators.
+
+
+Set cookie in response
+======================
+
+The idea was do not touch HTTP on your action class. It should not know how request and response are
+passed. But if you started use it instead of just AJAX requests, you may need set up cookies sometime.
+You can use :class:`~djangorpc.responses.RpcHttpResponse`.
+
+Some example::
+
+    class TricksThreeApiClass(object):
+
+        def set_cookie(self, user):
+            response = RpcHttpResponse({'msg': 'Hello!'})
+            response.set_cookie('rpccookie', '123456')
+            return response

@@ -1,4 +1,4 @@
-from djangorpc import RpcRouter, Error, Msg
+from djangorpc import RpcRouter, Error, Msg, RpcHttpResponse
 from djangorpc.decorators import add_request_to_kwargs, login_required
 from djangorpc.exceptions import RpcExceptionEvent
 
@@ -52,6 +52,11 @@ class TricksThreeApiClass(object):
     @login_required
     def func7(self, user):
         pass
+
+    def set_cookie(self, user):
+        response = RpcHttpResponse({'msg': 'Hello!'})
+        response.set_cookie('rpccookie', '123456')
+        return response
 
 
 class CustomRouter(RpcRouter):

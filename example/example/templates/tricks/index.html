@@ -32,6 +32,11 @@
         TricksThreeApi.func7(function(response, sb){
             console.log(response.msg);
         })
+
+        TricksThreeApi.set_cookie(function(response, sb){
+            console.log(response);
+            console.log(document.cookie)
+        })
     </script>
 {% endblock %}
 

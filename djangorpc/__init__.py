@@ -61,7 +61,7 @@ class RpcRouter(object):
             #This looks like a little ugly
             if 'result' in mr and isinstance(mr['result'], RpcHttpResponse):
                 for key, val in mr['result'].cookies.items():
-                    response.set_cookie(key, val.value, val['max-age'], val['expires'], val['path'],
+                    response.set_cookie(key, val.value, val['max-age'] or None, val['expires'], val['path'],
                                         val['domain'], val['secure'])
                 mr['result'] = dict(mr['result'])
 
