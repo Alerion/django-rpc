@@ -36,6 +36,7 @@
 {% block content %}
     <form action="." method="post" id="feedback_form">
         <div class="global-errors"></div>
+        {% csrf_token %}
         <table>
         {{ form }}
         <tr>
