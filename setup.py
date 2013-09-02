@@ -11,7 +11,7 @@ README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 setup(
     name='DjangoRpc',
     version='0.2',
-    license='Apache License 2.0',
+    license='The MIT License (MIT)',
     author='Dmitriy Kostochko',
     author_email='alerion.um@gmail.com',
     packages=find_packages(exclude=['example', 'example.*']),
