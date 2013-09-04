@@ -1,11 +1,14 @@
 *.*~
 *.pyc
 *.sublime-*
+*.log
 build/
 database.sqlite
 *.sublime-*
-.idea/*
+.idea/
+.tox/
 dist/
 DjangoRpc.egg-info/
+djangorpc/runtests/coverage
 env/
 MANIFEST

@@ -1,0 +1,2 @@
+django-coverage==1.2.4
+tox==1.6.0
