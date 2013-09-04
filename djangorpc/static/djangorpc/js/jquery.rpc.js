@@ -323,7 +323,8 @@
                 ts: t,
                 type: 'POST',
                 timeout: this.timeout,
-                dataType: 'json'
+                dataType: 'json',
+                contentType: "application/json"
             }, callData;
 
             if($.isArray(t)){
@@ -477,5 +478,3 @@
     });
 
 })(jQuery);
-
-
