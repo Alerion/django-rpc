@@ -3,7 +3,12 @@ from djangorpc.utils.forms import AjaxForm
 
 
 class FeedbackForm(forms.Form, AjaxForm):
+    RATING_CHOICES = (
+        ('good', 'good'),
+        ('bad', 'bad'),
+    )
     email = forms.EmailField()
+    rating = forms.ChoiceField(choices=RATING_CHOICES)
     message = forms.CharField(widget=forms.Textarea())
 
     def send(self):
