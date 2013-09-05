@@ -68,12 +68,16 @@ class CustomRouter(RpcRouter):
         }
 
 
-custom_router = CustomRouter('tricks:custom_router', {
-    'TricksApi': TricksApiClass(),
-    'TricksOneApi': TricksOneApiClass()
-})
+custom_router = CustomRouter(
+    {
+        'TricksApi': TricksApiClass(),
+        'TricksOneApi': TricksOneApiClass()
+    },
+    url_namespace='tricks:custom_rpc')
 
-custom_router_one = RpcRouter('tricks:custom_router_one', {
-    'TricksTwoApi': TricksTwoApiClass(),
-    'TricksThreeApi': TricksThreeApiClass()
-})
+custom_router_one = RpcRouter(
+    {
+        'TricksTwoApi': TricksTwoApiClass(),
+        'TricksThreeApi': TricksThreeApiClass()
+    },
+    url_namespace='tricks:custom_rpc_one')

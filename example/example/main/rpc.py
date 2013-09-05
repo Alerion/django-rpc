@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from djangorpc import RpcRouter, Error, Msg
 from djangorpc.decorators import form_handler
 from .forms import FeedbackForm, FileForm
@@ -34,6 +36,8 @@ class MainApiClass(object):
             return Error(form.get_errors())
 
 
-router = RpcRouter('main:router', {
-    'MainApi': MainApiClass(),
-})
+router = RpcRouter(
+    {
+        'MainApi': MainApiClass(),
+    },
+    url_namespace='main:rpc')

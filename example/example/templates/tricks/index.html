@@ -2,8 +2,8 @@
 
 {% block js %}
     {{ block.super }}
-    <script src="{% url 'tricks:custom_router_api' %}"></script>
-    <script src="{% url 'tricks:custom_router_one_api' %}"></script>
+    <script src="{% url 'tricks:custom_rpc:jsapi' %}"></script>
+    <script src="{% url 'tricks:custom_rpc_one:jsapi' %}"></script>
     <script>
         TricksApi.func1(function(response){
             console.log(response.msg);

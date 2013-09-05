@@ -1,5 +1,8 @@
+from __future__ import unicode_literals
+
 from django.utils.translation import ugettext_lazy as _
-from .exceptions import RpcExceptionEvent
+
+from djangorpc.exceptions import RpcExceptionEvent
 
 METHOD_ATTRIBUTES = ['_pre_execute', '_form_handler', '_extra_kwargs']
 

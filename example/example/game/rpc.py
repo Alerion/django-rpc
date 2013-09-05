@@ -22,6 +22,8 @@ class GameApiClass(object):
         }
 
 
-router = RpcRouter('game:router', {
-    'GameApi': GameApiClass(),
-})
+router = RpcRouter(
+    {
+        'GameApi': GameApiClass(),
+    },
+    url_namespace='game:router')

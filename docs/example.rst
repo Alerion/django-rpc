@@ -5,11 +5,11 @@ Example
 
 Let's take a look at a quick example how to use Django RPC application.
 
-We'll create a page with button, which calls server-side method using Django RPC.
+We'll create a page with a button, which calls server-side method using Django RPC.
 
-Create ``actions.py`` in ``someapp`` application of our ``someproject`` project with following code::
+Create ``rpc.py`` in your project folder with following code::
 
-    from djangorpc import RpcRouter, Error, Msg
+    from djangorpc import RpcRouter, Msg
 
 
     class MainApiClass(object):
@@ -17,28 +17,29 @@ Create ``actions.py`` in ``someapp`` application of our ``someproject`` project 
         def hello(self, username, user):
             return Msg(u'Hello, %s!' % username)
 
-    router = RpcRouter('main:router', {
+    rpc_router = RpcRouter({
         'MainApi': MainApiClass(),
     })
 
 Add this to ``urls.py``::
 
     from django.conf.urls import patterns, include, url
-    from .actions import router
+    from rpc import rpc_router
 
 
     urlpatterns = patterns('someproject.someapp.views',
-        url(r'^router/$', router, name='router'),
-        url(r'^router/api/$', router.api, name='api'),
+        url(r'^rpc/', include(rpc_router.urls))
     )
 
 Add following code to page template::
 
-    <script src="{% url 'main:api' %}"></script>
+    <script src="{% url 'jsapi' %}"></script>
     <script>
         MainApi.hello('username', function(resp, sb){
             alert(resp.msg);
         });
     </script>
 
-Reload page and you will see alert with message "Hello, username!".
+Reload page and you will see an alert with the message "Hello, username!".
+
+The working project example you can find in our repo https://github.com/Alerion/Django-RPC.

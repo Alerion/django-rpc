@@ -51,6 +51,8 @@
                 alert('Error during RPC request: '+event.message);
             });
         </script>
+        <script src="{% url 'jsapi' %}"></script>
+        <script>RpcApi.log_something('test')</script>
         {% endblock %}
     </head>
     <body>

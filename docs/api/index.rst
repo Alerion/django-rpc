@@ -6,7 +6,7 @@ API Guide
 .. toctree::
     :maxdepth: 2
 
-    base
+    router
     responses
     decorators
     exceptions

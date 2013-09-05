@@ -17,7 +17,13 @@ import sys, os
 def rel(*x):
     return os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
+sys.path.insert(0, rel('../example'))
 sys.path.insert(0, rel('..'))
+
+from django.core.management import setup_environ
+from example import settings
+
+setup_environ(settings)
 
 # -- General configuration -----------------------------------------------------
 

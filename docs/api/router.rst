@@ -1,7 +1,7 @@
 Base classes
 ============
 
-.. automodule:: djangorpc
+.. automodule:: djangorpc.router
     :members:
     :show-inheritance:
     :member-order: bysource

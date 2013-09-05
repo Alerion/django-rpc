@@ -2,7 +2,7 @@
 
 {% block js %}
     {{ block.super }}
-    <script src="{% url 'main:api' %}"></script>
+    <script src="{% url 'main:rpc:jsapi' %}"></script>
     <script>
         MainApi.func1(1, 2, 3);
         MainApi.func1(1, 2);

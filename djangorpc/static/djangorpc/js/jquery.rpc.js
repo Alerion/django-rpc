@@ -336,15 +336,8 @@
                 callData = this.getCallData(t);
             }
 
-            if(this.enableUrlEncode){
-                var params = {};
-                params[(typeof this.enableUrlEncode == 'string') ? this.enableUrlEncode : 'data'] = $.JSON.encode(callData);
-                o.data = $.param(params);
-            }else{
-                o.data = encodeURIComponent($.JSON.encode(callData));
-                o.processData = false;
-            }
-
+            o.data = $.JSON.encode(callData);
+            o.processData = false;
             o.complete = this.onData.createDelegate(this, t, true);
             $.ajax(o);
         },

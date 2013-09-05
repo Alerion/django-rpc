@@ -2,7 +2,7 @@
 
 {% block js %}
     {{ block.super }}
-    <script src="{% url 'main:api' %}"></script>
+    <script src="{% url 'main:rpc:jsapi' %}"></script>
     <script>
     jQuery(function($){
         $('#feedback_form').ajaxForm({
