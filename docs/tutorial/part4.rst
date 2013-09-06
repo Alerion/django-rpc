@@ -67,26 +67,27 @@ Now create some actions classes for testing. Do not forget about new ``request``
 
 And add theme to our router::
 
-    custom_router = CustomRouter('tricks:custom_router', {
-        'TricksApi': TricksApiClass(),
-        'TricksOneApi': TricksOneApiClass()
-    })
+    custom_router = CustomRouter(
+        {
+            'TricksApi': TricksApiClass(),
+            'TricksOneApi': TricksOneApiClass()
+        },
+        url_namespace='tricks:custom_rpc')
 
 Just to have full example, lets show ``urls.py``::
 
     from django.conf.urls import patterns, include, url
-    from actions import custom_router
+    from .rpc import custom_router
 
 
     urlpatterns = patterns('example.tricks.views',
         url(r'^$', 'index', name='index'),
-        url(r'^custom_router/$', custom_router, name='custom_router'),
-        url(r'^custom_router/api/$', custom_router.api, name='custom_router_api'),
+        url(r'^custom_rpc/', include(custom_router.urls, 'custom_rpc')),
     )
 
 and our template::
 
-    <script src="{% url 'tricks:custom_router_api' %}"></script>
+    <script src="{% url 'tricks:custom_rpc:jsapi' %}"></script>
     <script>
         TricksApi.func1(function(response){
             console.log(response.msg);
@@ -191,8 +192,7 @@ At first let our URL-patterns accept arguments from URL::
 
     urlpatterns = patterns('example.game.views',
         url(r'^battle/(?P<battle_id>\d+)/$', 'battle', name='battle'),
-        url(r'^router/(?P<battle_id>\d+)/$', router, name='router'),
-        url(r'^router/api/(?P<battle_id>\d+)/$', router.api, name='api'),
+        url(r'^rpc/(?P<battle_id>\d+)/', include(router.urls, 'rpc')),
     )
 
 `battle` view is not related to RPC, just want to show how harmoniously it is.
@@ -219,13 +219,15 @@ Our `actions.py` can be like this::
                 'battle': battle
             }
 
-    router = RpcRouter('game:router', {
-        'GameApi': GameApiClass(),
-    })
+    router = RpcRouter(
+        {
+            'GameApi': GameApiClass(),
+        },
+        url_namespace='game:rpc')
 
 And in our template just use `battle_id` to create URL to our rpc script::
 
-    <script src="{% url 'game:api' battle_id %}"></script>
+    <script src="{% url 'game:rpc:jsapi' battle_id %}"></script>
     <script>
         GameApi.move(1, 2);
     </script>

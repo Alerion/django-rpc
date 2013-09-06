@@ -26,4 +26,4 @@ router = RpcRouter(
     {
         'GameApi': GameApiClass(),
     },
-    url_namespace='game:router')
+    url_namespace='game:rpc')

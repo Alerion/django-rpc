@@ -2,7 +2,7 @@
 
 {% block js %}
     {{ block.super }}
-    <script src="{% url 'game:api' battle_id %}"></script>
+    <script src="{% url 'game:rpc:jsapi' battle_id %}"></script>
     <script>
     jQuery(function($){
         $('#move-button').click(function(){

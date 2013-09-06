@@ -7,6 +7,8 @@ class MainApiClass(object):
         return Msg(u'Hello, %s' % username)
 
 
-router = RpcRouter('tests:router', {
-    'MainApi': MainApiClass(),
-})
+router = RpcRouter(
+    {
+        'MainApi': MainApiClass(),
+    },
+    url_namespace='tests:rpc')

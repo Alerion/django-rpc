@@ -15,10 +15,8 @@ class TestRpcClient(Client):
             'data': data,
             'tid': tid
         }
-        data = {}
-        data[json.dumps(rpc_data)] = ''
 
-        response = self.post(url, data)
+        response = self.post(url, json.dumps(rpc_data), content_type="application/json")
 
         assert response.json[0]['action'] == action
         assert response.json[0]['method'] == method

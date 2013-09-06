@@ -8,8 +8,8 @@ First API class
 ---------------
 
 Idea of `RPC <http://en.wikipedia.org/wiki/Remote_procedure_call>`_ to execute some server-side functions
-from client in easy way. In our case we will execute classes' methods from browser with Javascript.
-Lets create some simple class in our ``main`` application. Create ``main/actions.py`` with following code::
+from client in an easy way. In our case we will execute classes' methods from a browser with Javascript.
+Lets create some simple class in our ``main`` application. Create ``main/rpc.py`` with the following code::
 
     from djangorpc import RpcRouter, Error, Msg
 
@@ -20,16 +20,16 @@ Lets create some simple class in our ``main`` application. Create ``main/actions
             return Msg(u'Hello %s' % username)
 
 ``MainApiClass`` is just Python class, whose methods we are going to call with Javascript.
-I hope it is clear what ``hello`` method going to do. As out application was inspired with ExtJs Direct,
-we will call our classes ``actions`` too. Action method should return Python dictionary
+I hope it is clear what the ``hello`` method going to do. As out application was inspired with ExtJs Direct,
+we will call our classes ``actions`` too. Action's method should return Python dictionary
 (with some exceptions, we will discuss this later).
 
-``request.user`` is passed with arguments from request. We do not pass ``request`` object, because
+``request.user`` is passed with arguments from a request. We do not pass ``request`` object, because
 we do not want that people use them as Django views. But it is easy tell Django RPC to pass request
 if you need or do not pass ``request.user`` if you do not need it.
 
 :class:`~djangorpc.responses.Msg` and :class:`~djangorpc.responses.Error`
-are just dictionary subclasses and save response message in ``msg`` and ``error`` keys respectively;
+are just dictionary subclasses and save a response message in ``msg`` and ``error`` keys respectively;
 they are used to make some kind of standard in our project and you can add any extra values to these
 dictionaries.
 
@@ -43,32 +43,31 @@ is equal to::
 
 Now lets connect our action class to URL to handle requests. Add this to ``main/actions.py``::
 
-    router = RpcRouter('main:router', {
+    router = RpcRouter({
         'MainApi': MainApiClass(),
-    })
+    },
+    url_namespace='main:rpc')
 
 And create ``main/urls.py``::
 
     from django.conf.urls import patterns, include, url
-    from actions import router
+    from .rpc import router
 
 
     urlpatterns = patterns('example.main.views',
         url(r'^$', 'index', name='index'),
-        url(r'^router/$', router, name='router'),
-        url(r'^router/api/$', router.api, name='api'),
+        url(r'^rpc/', include(router.urls, 'rpc')),
     )
 
 :class:`~djangorpc.RpcRouter` is class that helps "connect" our server-side and client-side. It generates
 some Javascript to use our actions in browser, passes requests to correct action's method and returns
 its response to our callback.
 
-First argument is URL-pattern name, or something we can pass to Django ``reverse`` function to get URL,
-that client should use to send requests. You can see this URL-pattern in ``main/urls.py``.
-``main:router`` is used because our application URL-pattern is added with ``main`` namespace.
-``main:api`` URL-pattern is used to load Javascript objects on page, later we will see what is going on here.
+Fisrt argument is dictionary mapping our action classes with names we age going to use in Javascript.
 
-Second argument is dictionary mapping our action classes with names we age going to use in Javascript.
+Second argument is URL-pattern namespace, that will be used to get URL with Django ``reverse`` function, that client should use to send requests. You can see this URL-pattern in ``main/urls.py``.
+``main:rpc`` is used because our application URL-pattern is added with ``main`` namespace, and we included ``router.urls`` with ``rpc`` namespace.
+.
 In our example we will use something like this::
 
     MainApi.hello('username')
@@ -84,7 +83,7 @@ Lets create some simple view::
 
 In ``main/hello.html`` we should load generated JS code to call server-side methods::
 
-    <script src="{% url 'main:api' %}"></script>
+    <script src="{% url 'main:rpc:jsapi' %}"></script>
 
 We use URL defined before in ``main/urls.py``.
 
@@ -97,8 +96,8 @@ We can call our method::
 You should see alert with messages "Hellp, Username".
 
 
-Default arguments and *args
----------------------------
+Default arguments and \*args
+----------------------------
 
 Action method can have optional arguments or accept ``*args``. Pay attention that ``user`` is passed as
 keyword argument, so you should accept ``**kwargs`` according to Python syntax.

@@ -20,11 +20,11 @@ Install using pip::
 
 Now all required JS files are accessible via Django ``staticfiles`` application.
 
-2. Add jQuery to your page. You can use one fro application for quick start::
+2. Add jQuery to your page. You can use one from our application for a quick start::
 
     <script src="{% static 'djangorpc/js/jquery-1.9.1.min.js' %}"></script>
 
-3. In your base templates add required JS scripts::
+3. Add required JS scripts::
 
     <script src="{% static 'djangorpc/js/jquery.util.js' %}"></script>
     <script src="{% static 'djangorpc/js/jquery.rpc.js' %}"></script>

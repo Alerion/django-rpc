@@ -1,9 +1,8 @@
 from django.conf.urls import patterns, include, url
-from .actions import router
+from .rpc import router
 
 
 urlpatterns = patterns(
     '',
-    url(r'^router/$', router, name='router'),
-    url(r'^router/api/$', router.api, name='api'),
+    url(r'^rpc/', include(router.urls, 'rpc')),
 )

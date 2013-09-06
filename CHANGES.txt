@@ -1,8 +1,18 @@
-0.1.0 - 2013/06/04
+0.3 - 2013/09/06
 
-* Initial release
+* Change the way we add rpc router to urls
+* Add some tests
+
+0.2 - 2013/06/14
+
+* Update documentation and examples
+* Add support of forms with files
 
 0.1.1 - 2013/06/05
 
 * Fix success callback
 * Update documentation
+
+0.1.0 - 2013/06/04
+
+* Initial release

@@ -5,9 +5,9 @@ Example
 
 Let's take a look at a quick example how to use Django RPC application.
 
-We'll create a page with a button, which calls server-side method using Django RPC.
+We'll create a page with a button, which calls a server-side method using Django RPC.
 
-Create ``rpc.py`` in your project folder with following code::
+Create ``rpc.py`` in your project folder with the following code::
 
     from djangorpc import RpcRouter, Msg
 
@@ -31,7 +31,7 @@ Add this to ``urls.py``::
         url(r'^rpc/', include(rpc_router.urls))
     )
 
-Add following code to page template::
+Add the following code to the page template::
 
     <script src="{% url 'jsapi' %}"></script>
     <script>
@@ -40,6 +40,6 @@ Add following code to page template::
         });
     </script>
 
-Reload page and you will see an alert with the message "Hello, username!".
+Reload the page and you will see an alert with the message "Hello, username!".
 
 The working project example you can find in our repo https://github.com/Alerion/Django-RPC.
