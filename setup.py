@@ -20,6 +20,7 @@ setup(
     description='Django RPC for jQuery',
     long_description=README,
     include_package_data=True,
+    install_requires=[],
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
