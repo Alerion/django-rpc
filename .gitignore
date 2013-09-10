@@ -9,6 +9,5 @@ database.sqlite
 .tox/
 dist/
 DjangoRpc.egg-info/
-djangorpc/runtests/coverage
 env/
 MANIFEST

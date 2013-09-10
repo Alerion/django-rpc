@@ -10,15 +10,15 @@ README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 setup(
     name='DjangoRpc',
-    version='0.3',
+    version=__import__('djangorpc').__version__,
+    description=__import__('djangorpc').__description__,
+    long_description=README,
     license='The MIT License (MIT)',
     author='Dmitriy Kostochko',
-    author_email='alerion.um@gmail.com',
+    author_email='alerionum+django@gmail.com',
     packages=find_packages(exclude=['example', 'example.*']),
     url='https://django-rpc.readthedocs.org/',
     keywords='Django, RPC, API, jQuery',
-    description='Django RPC for jQuery',
-    long_description=README,
     include_package_data=True,
     install_requires=[],
     classifiers=[

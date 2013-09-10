@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from .utils import TestRpcClient
+from ..utils.testing import TestRpcClient
 
 
 class MainTestCase(TestCase):
@@ -12,8 +12,8 @@ class MainTestCase(TestCase):
         self.client = TestRpcClient()
 
     def test_base(self):
-        api_url = reverse('tests:rpc:jsapi')
-        router_url = reverse('tests:rpc:router')
+        api_url = reverse('main:rpc:jsapi')
+        router_url = reverse('main:rpc:router')
 
         response = self.client.get(api_url)
         self.assertEqual(response.status_code, 200)

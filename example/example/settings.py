@@ -85,12 +85,22 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'example.main',
+    'example.game',
+    'example.tricks',
+
     'djangorpc',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
 )
+
+try:
+    import django_coverage
+
+    INSTALLED_APPS = ('django_coverage',)
+    COVERAGE_REPORT_HTML_OUTPUT_DIR = rel('../coverage')
+    COVERAGE_MODULE_EXCLUDES = ['tests$', 'settings$', 'urls$', 'locale$',
+                                        'common.views.test', '__init__', 'django',
+                                        'migrations']
+except ImportError:
+    pass
 
 LOGGING = {
     'version': 1,
