@@ -36,7 +36,7 @@ Install using pip::
 
 Now all required JS files are accessible via Django ``staticfiles`` application.
 
-2. Add jQuery to your page. You can use one fro application for quick start::
+2. Add jQuery to your page. You can use one from application for quick start::
 
     <script src="{% static 'djangorpc/js/jquery-1.9.1.min.js' %}"></script>
 
@@ -60,7 +60,7 @@ Example
 
 Let's take a look at a quick example how to use Django RPC application.
 
-We'll create a page with a button, which calls server-side method using Django RPC.
+We'll create a page which calls server-side method using Django RPC and shows us alert with received message.
 
 Create ``rpc.py`` in your project folder with following code::
 
