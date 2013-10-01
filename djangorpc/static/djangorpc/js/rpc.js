@@ -12,6 +12,8 @@ djangoRPC.RPC = (function($, utils){
         transactions: {},
         providers: {},
 
+        transport: null,
+
         exceptions: {
             TRANSPORT: 'xhr',
             PARSE: 'parse',
@@ -331,28 +333,19 @@ djangoRPC.RPC = (function($, utils){
         },
 
         doSend : function(t){
-            var o = {
-                url: this.url,
-                ts: t,
-                type: 'POST',
-                timeout: this.timeout,
-                dataType: 'json',
-                contentType: "application/json"
-            }, callData;
-
             if(t instanceof Array){
-                callData = [];
+                var callData = [];
                 for(var i = 0, len = t.length; i < len; i++){
                     callData.push(this.getCallData(t[i]));
                 }
             }else{
-                callData = this.getCallData(t);
+                var callData = this.getCallData(t);
             }
-
-            o.data = utils.JSON.encode(callData);
-            o.processData = false;
-            o.complete = this.onData.bind(this, t);
-            $.ajax(o);
+            
+            var encodedData = utils.JSON.encode(callData);
+            var completeCallback = this.onData.bind(this, t);
+            
+            djangoRPC.RPC.transport(this, t, encodedData, completeCallback);
         },
 
         combineAndSend : function(){
@@ -494,3 +487,22 @@ djangoRPC.RPC = (function($, utils){
     return RPC;
 
 })(jQuery, djangoRPC.utils);
+
+
+// Sets up default jQuery xhr transport if jQuery is present
+if (typeof(jQuery) !== 'undefined')
+{
+    djangoRPC.RPC.transport = function(provider, transaction, data, completeCallback){
+        jQuery.ajax({
+            url: provider.url,
+            ts: transaction,
+            type: 'POST',
+            timeout: provider.timeout,
+            data: data,
+            dataType: 'json',
+            contentType: 'application/json',
+            processData: false,
+            complete: completeCallback
+        });
+    };
+}
