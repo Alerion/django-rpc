@@ -442,15 +442,29 @@ djangoRPC.RPC = (function(utils){
                 cb = scope && typeof(cb) === 'function' ? cb.bind(scope) : cb;
             }
 
-            var t = new RPC.Transaction({
-                provider: this,
-                args: args,
-                action: c,
-                method: m.name,
-                data: data,
-                form: form,
-                cb: cb
-            });
+            if (form !== null)
+            {
+                var t = new RPC.FormTransaction({
+                    provider: this,
+                    args: args,
+                    action: c,
+                    method: m.name,
+                    data: data,
+                    form: form,
+                    cb: cb
+                });
+            }
+            else
+            {
+                var t = new RPC.Transaction({
+                    provider: this,
+                    args: args,
+                    action: c,
+                    method: m.name,
+                    data: data,
+                    cb: cb
+                });
+            }
 
             if(this.observer.fireEvent('beforecall', this, t) !== false){
                 RPC.addTransaction(t);
