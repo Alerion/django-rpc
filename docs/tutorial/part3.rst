@@ -39,7 +39,7 @@ All responses are handled as events. You can subscribe to exceptions:
 
 .. code-block:: javascript
 
-    jQuery.Rpc.on('exception', function(event){
+    djangoRPC.RPC.observer.addListener('exception', function(event){
         alert('Error during RPC request: '+event.message);
     });
 
@@ -47,12 +47,12 @@ or to all events:
 
 .. code-block:: javascript
 
-    jQuery.Rpc.on('event', function(event){
+    djangoRPC.RPC.observer.addListener('event', function(event){
         console.log(event);
     });
 
 
-jquery.util.js
+utils.js
 --------------
 
-Contains different useful utilities used by jQuery.Rpc.
+Contains different useful utilities used by djangoRPC.RPC.
