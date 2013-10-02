@@ -2,7 +2,7 @@
 /**
  * @see https://github.com/Alerion/Django-RPC/
  */
-djangoRPC.RPC = (function($, utils){
+djangoRPC.RPC = (function(utils){
 
     var RPC = {
         TID: 1,
@@ -117,7 +117,29 @@ djangoRPC.RPC = (function($, utils){
 
         getProvider: function(){
             return this.provider;
-        }
+        },
+
+        getCallData: function(){
+            return {
+                action: this.action,
+                method: this.method,
+                data: this.data,
+                tid: this.tid
+            };
+        },
+    });
+
+
+    RPC.FormTransaction = utils.define({
+        __super__: RPC.Transaction,
+        getCallData: function(){
+            return {
+                rpcAction: this.action,
+                rpcMethod: this.method,
+                rpcTID: this.tid,
+                rpcUpload: this.form.find('input:file:enabled').length > 0
+            };
+        },
     });
 
 
@@ -314,32 +336,14 @@ djangoRPC.RPC = (function($, utils){
             }
         },
 
-        getCallData: function(t){
-            if (t.form){
-                return {
-                    rpcAction: t.action,
-                    rpcMethod: t.method,
-                    rpcTID: t.tid,
-                    rpcUpload: $('input:file:enabled', t.form).length > 0
-                };
-            } else {
-                return {
-                    action: t.action,
-                    method: t.method,
-                    data: t.data,
-                    tid: t.tid
-                };
-            }
-        },
-
         doSend : function(t){
             if(t instanceof Array){
                 var callData = [];
                 for(var i = 0, len = t.length; i < len; i++){
-                    callData.push(this.getCallData(t[i]));
+                    callData.push(t[i].getCallData());
                 }
             }else{
-                var callData = this.getCallData(t);
+                var callData = t.getCallData();
             }
             
             var encodedData = utils.JSON.encode(callData);
@@ -362,7 +366,7 @@ djangoRPC.RPC = (function($, utils){
             // fileUploadXhr tries parse json
             t.form.ajaxSubmit({
                 iframe: true,
-                data: utils.merge({}, this.getCallData(t), t.data),
+                data: utils.merge({}, t.getCallData(), t.data),
                 dataType: 'json',
                 complete: this.onData.bind(this, t),
                 type: 'POST',
@@ -486,7 +490,7 @@ djangoRPC.RPC = (function($, utils){
 
     return RPC;
 
-})(jQuery, djangoRPC.utils);
+})(djangoRPC.utils);
 
 
 // Sets up default jQuery xhr transport if jQuery is present
