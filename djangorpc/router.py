@@ -67,7 +67,7 @@ class RpcRouter(object):
         if not isinstance(requests, list):
             requests = [requests]
 
-        response = HttpResponse('', mimetype="application/json")
+        response = HttpResponse('', content_type="application/json")
 
         output = []
 
