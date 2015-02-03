@@ -97,6 +97,42 @@ Add following code to page template::
 
 Reload page and you will see an alert with the message "Hello, username!".
 
+If you get an error 403, you may have forgotten about CSRF.
+
+Here is an example of CSRF cookie injection::
+
+    <script>
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    // Only send the token to relative URLs i.e. locally.
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            },
+            dataType: 'json',
+            error:function(jqXHR, textStatus, errorThrown){
+                alert(textStatus +'\n'+ errorThrown)
+            }
+        });
+    </script>
+
 The working project example you can find in our repo.
 
 Contributing

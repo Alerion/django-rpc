@@ -1,3 +1,7 @@
+0.4 - 2015/02/03
+
+* Django 1.7 support
+
 0.3 - 2013/09/06
 
 * Change the way we add rpc router to urls
