@@ -19,11 +19,11 @@ def rel(*x):
 
 sys.path.insert(0, rel('../example'))
 sys.path.insert(0, rel('..'))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "example.settings")
 
-from django.core.management import setup_environ
-from example import settings
+from django import setup as django_setup
 
-setup_environ(settings)
+django_setup()
 
 # -- General configuration -----------------------------------------------------
 
