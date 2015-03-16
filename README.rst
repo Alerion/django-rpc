@@ -1,6 +1,6 @@
-*********
-DjangoRpc
-*********
+**********
+Django RPC
+**********
 
 Django RPC for jQuery. Allows execute some server-side class methods with Javascript in your browser.
 
@@ -25,7 +25,7 @@ Install using pip::
 
 ...or clone the project from github::
 
-    https://github.com/Alerion/django-rpct
+    https://github.com/Alerion/django-rpc
 
 1. Add ``djangorpc`` application to ``INSTALLED_APPS`` settings::
 

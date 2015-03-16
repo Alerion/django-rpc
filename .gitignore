@@ -9,5 +9,6 @@ database.sqlite
 .tox/
 dist/
 DjangoRpc.egg-info/
+django_rpc.egg-info/
 env/
 MANIFEST
