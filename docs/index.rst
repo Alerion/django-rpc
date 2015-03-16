@@ -18,7 +18,7 @@ Inspired by Ext.Direct from ExtJs.
 Support
 -------
 
-You can ask a question or report a bug on `project Github repo <https://github.com/Alerion/Django-RPC/issues>`_.
+You can ask a question or report a bug on `project Github repo <https://github.com/Alerion/django-rpc/issues>`_.
 
 
 Requirements
@@ -27,7 +27,7 @@ Requirements
 Django RPC requires the following:
 
 * Python (2.6.5+, 2.7)
-* Django (1.4, 1.5, 1.6)
+* Django (1.4+)
 
 
 Contents

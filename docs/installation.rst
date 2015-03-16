@@ -5,11 +5,11 @@ Installation
 
 Install using pip::
 
-    pip install DjangoRpc
+    pip install django-rpc
 
 ...or clone the project from github::
 
-    https://github.com/Alerion/Django-RPC.git
+    https://github.com/Alerion/django-rpc
 
 1. Add ``djangorpc`` application to ``INSTALLED_APPS`` settings::
 

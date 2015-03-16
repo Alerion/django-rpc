@@ -14,18 +14,18 @@ Inspired by Ext.Direct from ExtJs 3.
 
 `Package Documentation <https://django-rpc.readthedocs.org/>`_
 
-`Github repo <https://github.com/Alerion/Django-RPC>`_
+`Github repo <https://github.com/Alerion/django-rpc>`_
 
 Installation
 ============
 
 Install using pip::
 
-    pip install DjangoRpc
+    pip install django-rpc
 
 ...or clone the project from github::
 
-    https://github.com/Alerion/Django-RPC.git
+    https://github.com/Alerion/django-rpct
 
 1. Add ``djangorpc`` application to ``INSTALLED_APPS`` settings::
 

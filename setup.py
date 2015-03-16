@@ -9,7 +9,7 @@ except ImportError:
 README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 setup(
-    name='DjangoRpc',
+    name='django-rpc',
     version=__import__('djangorpc').__version__,
     description=__import__('djangorpc').__description__,
     long_description=README,
