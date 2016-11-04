@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import json
 from inspect import getargspec
 
-from django.conf.urls import patterns, url
+from django.conf.urls import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 
@@ -17,6 +17,7 @@ class RpcRouter(object):
     """
     Router class for RPC.
     """
+    print 'rpc'
 
     def __init__(self, actions={}, url_namespace=None, enable_buffer=True):
         """
@@ -32,15 +33,15 @@ class RpcRouter(object):
         self.enable_buffer = enable_buffer
 
     def get_urls(self):
-        return (
+        return [
             url(r'^jsapi/$', self.api, name=JS_API_URL_NAME),
             url(r'^router/$', self.dispatch, name=ROUTER_URL_NAME)
-        )
+        ]
 
     @property
     def urls(self):
         if not hasattr(self, '_urls'):
-            self._urls = patterns('', *self.get_urls())
+            self._urls = self.get_urls()
         return self._urls
 
     def dispatch(self, request, *args, **kwargs):
