@@ -22,7 +22,7 @@ class RpcExceptionEvent(BaseRpcException):
 
     And you can catch this with::
 
-        jQuery.Rpc.on('exception', function(event){
+        djangoRPC.RPC.observer.addListener('exception', function(event){
             alert('ERROR: '+event.message);
         });
     """

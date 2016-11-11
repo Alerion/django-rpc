@@ -157,7 +157,7 @@ and catch it with javascript:
 
 .. code-block:: javascript
 
-    jQuery.Rpc.on('exception', function(event){
+    djangoRPC.RPC.observer.addListener('exception', function(event){
         alert('Error during RPC request: '+event.message);
     });
 

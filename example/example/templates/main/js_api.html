@@ -4,7 +4,7 @@
     {{ block.super }}
     <script src="{% url 'main:rpc:jsapi' %}"></script>
     <script>
-    jQuery.Rpc.on('event', function(event){
+    djangoRPC.RPC.observer.addListener('event', function(event){
         console.log(event);
     });
 

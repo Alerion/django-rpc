@@ -26,14 +26,14 @@ Now all required JS files are accessible via Django ``staticfiles`` application.
 
 3. Add required JS scripts::
 
-    <script src="{% static 'djangorpc/js/jquery.util.js' %}"></script>
-    <script src="{% static 'djangorpc/js/jquery.rpc.js' %}"></script>
+    <script src="{% static 'djangorpc/js/utils.js' %}"></script>
+    <script src="{% static 'djangorpc/js/rpc.js' %}"></script>
     <script src="{% static 'djangorpc/js/jquery.form.js' %}"></script>
 
 4. You can handle all errors in one place and show some message to user::
 
     //Show error message for RPC exceptions
-    jQuery.Rpc.on('exception', function(event){
+    djangoRPC.RPC.observer.addListener('exception', function(event){
         alert('Error during RPC request: '+event.message);
     });
 
